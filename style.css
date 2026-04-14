@@ -1,0 +1,1388 @@
+/* =====================================================
+   TAMAGOTCHI CSS
+   ===================================================== */
+
+:root {
+  --lcd-green: #8bac0f;
+  --lcd-mid: #306230;
+  --lcd-dark: #0f380f;
+  --device-color: #c8e6c9;
+  --device-shadow: #4caf50;
+  --device-dark: #388e3c;
+  --button-color: #81c784;
+  --button-active: #a5d6a7;
+  --button-disabled: #b0bec5;
+  --pixel: 4px;
+  --yoshi-green:     #3db54a;
+  --yoshi-dark:      #1c8230;
+  --yoshi-belly:     #f5f5dc;
+  --yoshi-nose:      #e8621a;
+  --yoshi-shoe:      #cc2200;
+  --yoshi-eye-white: #ffffff;
+  --yoshi-pupil:     #1a1a1a;
+  --yoshi-egg-spot:  #1c8230;
+  --yoshi-egg-base:  #f0ffe0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: radial-gradient(ellipse at center, #e8f5e9 0%, #c8e6c9 40%, #a5d6a7 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 16px;
+}
+
+/* =====================================================
+   DEVICE SHELL
+   ===================================================== */
+
+.device {
+  max-width: 340px;
+  width: 100%;
+  background: var(--device-color);
+  border-radius: 50% 50% 45% 45% / 40% 40% 35% 35%;
+  padding: 20px 24px 28px;
+  box-shadow:
+    0 8px 0 var(--device-dark),
+    0 12px 24px rgba(0,0,0,0.35),
+    inset 0 2px 0 rgba(255,255,255,0.6),
+    inset 0 -2px 0 rgba(0,0,0,0.15);
+  position: relative;
+  user-select: none;
+}
+
+.device-top {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.antenna {
+  width: 8px;
+  height: 20px;
+  background: var(--device-dark);
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0 -6px 0 5px var(--device-dark), 0 -10px 0 5px var(--device-color);
+}
+
+/* =====================================================
+   SCREEN
+   ===================================================== */
+
+.screen-bezel {
+  background: var(--device-dark);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow:
+    inset 0 4px 8px rgba(0,0,0,0.6),
+    inset 0 -2px 4px rgba(255,255,255,0.1);
+  margin-bottom: 12px;
+}
+
+.screen {
+  width: 240px;
+  height: 240px;
+  margin: 0 auto;
+  background: var(--lcd-dark);
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  border: 2px inset #050e05;
+}
+
+/* LCD scanlines */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.08) 3px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Sleep overlay */
+.sleep-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.0);
+  transition: background 0.5s ease;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.screen.lights-off .sleep-overlay {
+  background: rgba(0,0,0,0.75);
+}
+
+/* =====================================================
+   ALERT ICONS
+   ===================================================== */
+
+.alert-icons {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  gap: 4px;
+  z-index: 9;
+}
+
+.icon-attention,
+.icon-skull {
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  filter: drop-shadow(0 0 2px #8bac0f);
+}
+
+.icon-attention.active {
+  opacity: 1;
+  animation: blink 1s infinite;
+}
+
+.icon-skull.active {
+  opacity: 1;
+  animation: blink 0.6s infinite;
+}
+
+/* =====================================================
+   PET CHARACTER
+   ===================================================== */
+
+.pet {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+.pet::before,
+.pet::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: var(--pixel);
+  height: var(--pixel);
+  top: 0;
+  left: 0;
+}
+
+/* ------ EGG ------ */
+.pet--egg::before {
+  /* Yoshi egg: cream oval with green diamond spots */
+  box-shadow:
+    /* cream egg body — tall oval ~10×13 pixels */
+    8px 0px 0 0 var(--yoshi-egg-base),  16px 0px 0 0 var(--yoshi-egg-base),  24px 0px 0 0 var(--yoshi-egg-base),
+    4px 4px 0 0 var(--yoshi-egg-base),  8px 4px 0 0 var(--yoshi-egg-base),   12px 4px 0 0 var(--yoshi-egg-base),  16px 4px 0 0 var(--yoshi-egg-base),  20px 4px 0 0 var(--yoshi-egg-base),  24px 4px 0 0 var(--yoshi-egg-base),  28px 4px 0 0 var(--yoshi-egg-base),
+    0px 8px 0 0 var(--yoshi-egg-base),  4px 8px 0 0 var(--yoshi-egg-base),   8px 8px 0 0 var(--yoshi-egg-base),  12px 8px 0 0 var(--yoshi-egg-base),  16px 8px 0 0 var(--yoshi-egg-base),  20px 8px 0 0 var(--yoshi-egg-base),  24px 8px 0 0 var(--yoshi-egg-base),  28px 8px 0 0 var(--yoshi-egg-base),  32px 8px 0 0 var(--yoshi-egg-base),
+    0px 12px 0 0 var(--yoshi-egg-base), 4px 12px 0 0 var(--yoshi-egg-base),  8px 12px 0 0 var(--yoshi-egg-base), 12px 12px 0 0 var(--yoshi-egg-base), 16px 12px 0 0 var(--yoshi-egg-base), 20px 12px 0 0 var(--yoshi-egg-base), 24px 12px 0 0 var(--yoshi-egg-base), 28px 12px 0 0 var(--yoshi-egg-base), 32px 12px 0 0 var(--yoshi-egg-base),
+    0px 16px 0 0 var(--yoshi-egg-base), 4px 16px 0 0 var(--yoshi-egg-base),  8px 16px 0 0 var(--yoshi-egg-base), 12px 16px 0 0 var(--yoshi-egg-base), 16px 16px 0 0 var(--yoshi-egg-base), 20px 16px 0 0 var(--yoshi-egg-base), 24px 16px 0 0 var(--yoshi-egg-base), 28px 16px 0 0 var(--yoshi-egg-base), 32px 16px 0 0 var(--yoshi-egg-base),
+    0px 20px 0 0 var(--yoshi-egg-base), 4px 20px 0 0 var(--yoshi-egg-base),  8px 20px 0 0 var(--yoshi-egg-base), 12px 20px 0 0 var(--yoshi-egg-base), 16px 20px 0 0 var(--yoshi-egg-base), 20px 20px 0 0 var(--yoshi-egg-base), 24px 20px 0 0 var(--yoshi-egg-base), 28px 20px 0 0 var(--yoshi-egg-base), 32px 20px 0 0 var(--yoshi-egg-base),
+    0px 24px 0 0 var(--yoshi-egg-base), 4px 24px 0 0 var(--yoshi-egg-base),  8px 24px 0 0 var(--yoshi-egg-base), 12px 24px 0 0 var(--yoshi-egg-base), 16px 24px 0 0 var(--yoshi-egg-base), 20px 24px 0 0 var(--yoshi-egg-base), 24px 24px 0 0 var(--yoshi-egg-base), 28px 24px 0 0 var(--yoshi-egg-base), 32px 24px 0 0 var(--yoshi-egg-base),
+    4px 28px 0 0 var(--yoshi-egg-base),  8px 28px 0 0 var(--yoshi-egg-base), 12px 28px 0 0 var(--yoshi-egg-base), 16px 28px 0 0 var(--yoshi-egg-base), 20px 28px 0 0 var(--yoshi-egg-base), 24px 28px 0 0 var(--yoshi-egg-base), 28px 28px 0 0 var(--yoshi-egg-base),
+    8px 32px 0 0 var(--yoshi-egg-base),  12px 32px 0 0 var(--yoshi-egg-base), 16px 32px 0 0 var(--yoshi-egg-base), 20px 32px 0 0 var(--yoshi-egg-base), 24px 32px 0 0 var(--yoshi-egg-base),
+    /* green diamond spots */
+    16px 4px 0 0 var(--yoshi-egg-spot),
+    8px 12px 0 0 var(--yoshi-egg-spot),  24px 12px 0 0 var(--yoshi-egg-spot),
+    16px 20px 0 0 var(--yoshi-egg-spot),
+    8px 28px 0 0 var(--yoshi-egg-spot),  24px 28px 0 0 var(--yoshi-egg-spot);
+}
+
+/* ------ BABY ------ */
+.pet--baby::before {
+  /* Baby Yoshi: tiny round green head, giant eyes, orange nose */
+  box-shadow:
+    /* Head top curve */
+    12px 4px 0 0 var(--yoshi-green),
+    16px 4px 0 0 var(--yoshi-green),
+    20px 4px 0 0 var(--yoshi-green),
+    24px 4px 0 0 var(--yoshi-green),
+    28px 4px 0 0 var(--yoshi-green),
+    /* Head row 1 */
+    8px 8px 0 0 var(--yoshi-green),
+    12px 8px 0 0 var(--yoshi-green),
+    16px 8px 0 0 var(--yoshi-green),
+    20px 8px 0 0 var(--yoshi-green),
+    24px 8px 0 0 var(--yoshi-green),
+    28px 8px 0 0 var(--yoshi-green),
+    32px 8px 0 0 var(--yoshi-green),
+    /* Head row 2 — big white eyes */
+    8px 12px 0 0 var(--yoshi-green),
+    12px 12px 0 0 var(--yoshi-eye-white),
+    16px 12px 0 0 var(--yoshi-eye-white),
+    20px 12px 0 0 var(--yoshi-green),
+    24px 12px 0 0 var(--yoshi-eye-white),
+    28px 12px 0 0 var(--yoshi-eye-white),
+    32px 12px 0 0 var(--yoshi-green),
+    /* Head row 3 — pupils + nose */
+    8px 16px 0 0 var(--yoshi-green),
+    12px 16px 0 0 var(--yoshi-eye-white),
+    16px 16px 0 0 var(--yoshi-pupil),
+    20px 16px 0 0 var(--yoshi-nose),
+    24px 16px 0 0 var(--yoshi-pupil),
+    28px 16px 0 0 var(--yoshi-eye-white),
+    32px 16px 0 0 var(--yoshi-green),
+    /* Head row 4 — bottom of eyes */
+    8px 20px 0 0 var(--yoshi-green),
+    12px 20px 0 0 var(--yoshi-green),
+    16px 20px 0 0 var(--yoshi-green),
+    20px 20px 0 0 var(--yoshi-green),
+    24px 20px 0 0 var(--yoshi-green),
+    28px 20px 0 0 var(--yoshi-green),
+    32px 20px 0 0 var(--yoshi-green),
+    /* Tiny round body */
+    12px 24px 0 0 var(--yoshi-green),
+    16px 24px 0 0 var(--yoshi-green),
+    20px 24px 0 0 var(--yoshi-belly),
+    24px 24px 0 0 var(--yoshi-green),
+    28px 24px 0 0 var(--yoshi-green),
+    /* Tiny feet */
+    12px 28px 0 0 var(--yoshi-shoe),
+    16px 28px 0 0 var(--yoshi-shoe),
+    24px 28px 0 0 var(--yoshi-shoe),
+    28px 28px 0 0 var(--yoshi-shoe);
+}
+
+/* ------ CHILD ------ */
+.pet--child::before {
+  /* Child Yoshi: rounder green body, white belly, eyes, nose, tiny shoes */
+  box-shadow:
+    /* Head top */
+    12px 0px 0 0 var(--yoshi-green),
+    16px 0px 0 0 var(--yoshi-green),
+    20px 0px 0 0 var(--yoshi-green),
+    24px 0px 0 0 var(--yoshi-green),
+    28px 0px 0 0 var(--yoshi-green),
+    /* Head row 1 */
+    8px 4px 0 0 var(--yoshi-green),
+    12px 4px 0 0 var(--yoshi-green),
+    16px 4px 0 0 var(--yoshi-green),
+    20px 4px 0 0 var(--yoshi-green),
+    24px 4px 0 0 var(--yoshi-green),
+    28px 4px 0 0 var(--yoshi-green),
+    32px 4px 0 0 var(--yoshi-green),
+    /* Head row 2 — eyes */
+    8px 8px 0 0 var(--yoshi-green),
+    12px 8px 0 0 var(--yoshi-eye-white),
+    16px 8px 0 0 var(--yoshi-pupil),
+    20px 8px 0 0 var(--yoshi-green),
+    24px 8px 0 0 var(--yoshi-eye-white),
+    28px 8px 0 0 var(--yoshi-pupil),
+    32px 8px 0 0 var(--yoshi-green),
+    /* Head row 3 — nose nub */
+    8px 12px 0 0 var(--yoshi-green),
+    12px 12px 0 0 var(--yoshi-green),
+    16px 12px 0 0 var(--yoshi-nose),
+    20px 12px 0 0 var(--yoshi-nose),
+    24px 12px 0 0 var(--yoshi-green),
+    28px 12px 0 0 var(--yoshi-green),
+    32px 12px 0 0 var(--yoshi-green),
+    /* Head row 4 — smile */
+    8px 16px 0 0 var(--yoshi-green),
+    12px 16px 0 0 var(--yoshi-green),
+    16px 16px 0 0 var(--yoshi-dark),
+    20px 16px 0 0 var(--yoshi-green),
+    24px 16px 0 0 var(--yoshi-dark),
+    28px 16px 0 0 var(--yoshi-green),
+    32px 16px 0 0 var(--yoshi-green),
+    /* Body upper */
+    8px 20px 0 0 var(--yoshi-green),
+    12px 20px 0 0 var(--yoshi-green),
+    16px 20px 0 0 var(--yoshi-belly),
+    20px 20px 0 0 var(--yoshi-belly),
+    24px 20px 0 0 var(--yoshi-belly),
+    28px 20px 0 0 var(--yoshi-green),
+    32px 20px 0 0 var(--yoshi-green),
+    /* Arms */
+    4px 20px 0 0 var(--yoshi-green),
+    36px 20px 0 0 var(--yoshi-green),
+    /* Body lower */
+    8px 24px 0 0 var(--yoshi-green),
+    12px 24px 0 0 var(--yoshi-green),
+    16px 24px 0 0 var(--yoshi-belly),
+    20px 24px 0 0 var(--yoshi-belly),
+    24px 24px 0 0 var(--yoshi-green),
+    28px 24px 0 0 var(--yoshi-green),
+    /* Legs */
+    12px 28px 0 0 var(--yoshi-green),
+    16px 28px 0 0 var(--yoshi-green),
+    24px 28px 0 0 var(--yoshi-green),
+    28px 28px 0 0 var(--yoshi-green),
+    /* Red shoes */
+    8px 32px 0 0 var(--yoshi-shoe),
+    12px 32px 0 0 var(--yoshi-shoe),
+    16px 32px 0 0 var(--yoshi-shoe),
+    24px 32px 0 0 var(--yoshi-shoe),
+    28px 32px 0 0 var(--yoshi-shoe),
+    32px 32px 0 0 var(--yoshi-shoe);
+}
+
+/* ------ TEEN ------ */
+.pet--teen::before {
+  /* Teen Yoshi: taller body, white belly, snout, eyes, shoes, tiny saddle hint */
+  box-shadow:
+    /* Head top */
+    12px 0px 0 0 var(--yoshi-green),
+    16px 0px 0 0 var(--yoshi-green),
+    20px 0px 0 0 var(--yoshi-green),
+    24px 0px 0 0 var(--yoshi-green),
+    28px 0px 0 0 var(--yoshi-green),
+    32px 0px 0 0 var(--yoshi-dark),
+    /* Head row 1 */
+    8px 4px 0 0 var(--yoshi-green),
+    12px 4px 0 0 var(--yoshi-green),
+    16px 4px 0 0 var(--yoshi-green),
+    20px 4px 0 0 var(--yoshi-green),
+    24px 4px 0 0 var(--yoshi-green),
+    28px 4px 0 0 var(--yoshi-green),
+    32px 4px 0 0 var(--yoshi-green),
+    /* Head row 2 — eyes (white + pupil) */
+    8px 8px 0 0 var(--yoshi-green),
+    12px 8px 0 0 var(--yoshi-eye-white),
+    16px 8px 0 0 var(--yoshi-eye-white),
+    20px 8px 0 0 var(--yoshi-green),
+    24px 8px 0 0 var(--yoshi-eye-white),
+    28px 8px 0 0 var(--yoshi-eye-white),
+    32px 8px 0 0 var(--yoshi-green),
+    /* Head row 3 — pupils */
+    8px 12px 0 0 var(--yoshi-green),
+    12px 12px 0 0 var(--yoshi-pupil),
+    16px 12px 0 0 var(--yoshi-eye-white),
+    20px 12px 0 0 var(--yoshi-green),
+    24px 12px 0 0 var(--yoshi-pupil),
+    28px 12px 0 0 var(--yoshi-eye-white),
+    32px 12px 0 0 var(--yoshi-green),
+    /* Snout — orange 3×2 */
+    8px 16px 0 0 var(--yoshi-green),
+    12px 16px 0 0 var(--yoshi-nose),
+    16px 16px 0 0 var(--yoshi-nose),
+    20px 16px 0 0 var(--yoshi-nose),
+    24px 16px 0 0 var(--yoshi-green),
+    28px 16px 0 0 var(--yoshi-green),
+    32px 16px 0 0 var(--yoshi-green),
+    8px 20px 0 0 var(--yoshi-green),
+    12px 20px 0 0 var(--yoshi-nose),
+    16px 20px 0 0 var(--yoshi-nose),
+    20px 20px 0 0 var(--yoshi-green),
+    24px 20px 0 0 var(--yoshi-green),
+    28px 20px 0 0 var(--yoshi-green),
+    32px 20px 0 0 var(--yoshi-dark),
+    /* Body upper + belly */
+    4px 24px 0 0 var(--yoshi-green),
+    8px 24px 0 0 var(--yoshi-green),
+    12px 24px 0 0 var(--yoshi-green),
+    16px 24px 0 0 var(--yoshi-belly),
+    20px 24px 0 0 var(--yoshi-belly),
+    24px 24px 0 0 var(--yoshi-belly),
+    28px 24px 0 0 var(--yoshi-belly),
+    32px 24px 0 0 var(--yoshi-green),
+    36px 24px 0 0 var(--yoshi-green),
+    /* Body mid + belly */
+    4px 28px 0 0 var(--yoshi-green),
+    8px 28px 0 0 var(--yoshi-green),
+    12px 28px 0 0 var(--yoshi-green),
+    16px 28px 0 0 var(--yoshi-belly),
+    20px 28px 0 0 var(--yoshi-belly),
+    24px 28px 0 0 var(--yoshi-belly),
+    28px 28px 0 0 var(--yoshi-green),
+    32px 28px 0 0 var(--yoshi-green),
+    /* Body lower */
+    8px 32px 0 0 var(--yoshi-green),
+    12px 32px 0 0 var(--yoshi-green),
+    16px 32px 0 0 var(--yoshi-green),
+    20px 32px 0 0 var(--yoshi-green),
+    24px 32px 0 0 var(--yoshi-green),
+    28px 32px 0 0 var(--yoshi-green),
+    /* Legs */
+    8px 36px 0 0 var(--yoshi-green),
+    12px 36px 0 0 var(--yoshi-green),
+    20px 36px 0 0 var(--yoshi-green),
+    24px 36px 0 0 var(--yoshi-green),
+    /* Red shoe bases */
+    4px 40px 0 0 var(--yoshi-shoe),
+    8px 40px 0 0 var(--yoshi-shoe),
+    12px 40px 0 0 var(--yoshi-shoe),
+    16px 40px 0 0 var(--yoshi-shoe),
+    20px 40px 0 0 var(--yoshi-shoe),
+    24px 40px 0 0 var(--yoshi-shoe),
+    28px 40px 0 0 var(--yoshi-shoe);
+}
+
+/* ------ ADULT GOOD (Happy Yoshi with saddle) ------ */
+.pet--adult-good::before {
+  box-shadow:
+    /* Head top */
+    12px 0px 0 0 var(--yoshi-green),
+    16px 0px 0 0 var(--yoshi-green),
+    20px 0px 0 0 var(--yoshi-green),
+    24px 0px 0 0 var(--yoshi-green),
+    28px 0px 0 0 var(--yoshi-green),
+    32px 0px 0 0 var(--yoshi-dark),
+    36px 0px 0 0 var(--yoshi-dark),
+    /* Head row 1 */
+    8px 4px 0 0 var(--yoshi-green),
+    12px 4px 0 0 var(--yoshi-green),
+    16px 4px 0 0 var(--yoshi-green),
+    20px 4px 0 0 var(--yoshi-green),
+    24px 4px 0 0 var(--yoshi-green),
+    28px 4px 0 0 var(--yoshi-green),
+    32px 4px 0 0 var(--yoshi-green),
+    36px 4px 0 0 var(--yoshi-green),
+    /* Eyes — large with whites + pupils + highlight */
+    4px 8px 0 0 var(--yoshi-green),
+    8px 8px 0 0 var(--yoshi-eye-white),
+    12px 8px 0 0 var(--yoshi-eye-white),
+    16px 8px 0 0 var(--yoshi-green),
+    20px 8px 0 0 var(--yoshi-eye-white),
+    24px 8px 0 0 var(--yoshi-eye-white),
+    28px 8px 0 0 var(--yoshi-green),
+    32px 8px 0 0 var(--yoshi-green),
+    4px 12px 0 0 var(--yoshi-green),
+    8px 12px 0 0 var(--yoshi-pupil),
+    12px 12px 0 0 var(--yoshi-eye-white),
+    16px 12px 0 0 var(--yoshi-green),
+    20px 12px 0 0 var(--yoshi-pupil),
+    24px 12px 0 0 var(--yoshi-eye-white),
+    28px 12px 0 0 var(--yoshi-green),
+    32px 12px 0 0 var(--yoshi-green),
+    /* Snout — large orange 4×2 */
+    4px 16px 0 0 var(--yoshi-green),
+    8px 16px 0 0 var(--yoshi-nose),
+    12px 16px 0 0 var(--yoshi-nose),
+    16px 16px 0 0 var(--yoshi-nose),
+    20px 16px 0 0 var(--yoshi-nose),
+    24px 16px 0 0 var(--yoshi-green),
+    28px 16px 0 0 var(--yoshi-green),
+    32px 16px 0 0 var(--yoshi-green),
+    4px 20px 0 0 var(--yoshi-green),
+    8px 20px 0 0 var(--yoshi-nose),
+    12px 20px 0 0 var(--yoshi-nose),
+    16px 20px 0 0 var(--yoshi-nose),
+    20px 20px 0 0 var(--yoshi-green),
+    24px 20px 0 0 var(--yoshi-green),
+    28px 20px 0 0 var(--yoshi-green),
+    32px 20px 0 0 var(--yoshi-green),
+    /* Happy arc mouth — 3 pixels */
+    8px 24px 0 0 var(--yoshi-green),
+    12px 24px 0 0 var(--yoshi-dark),
+    16px 24px 0 0 var(--yoshi-green),
+    20px 24px 0 0 var(--yoshi-dark),
+    24px 24px 0 0 var(--yoshi-green),
+    28px 24px 0 0 var(--yoshi-green),
+    32px 24px 0 0 var(--yoshi-green),
+    /* Body upper + belly */
+    4px 28px 0 0 var(--yoshi-green),
+    8px 28px 0 0 var(--yoshi-green),
+    12px 28px 0 0 var(--yoshi-green),
+    16px 28px 0 0 var(--yoshi-belly),
+    20px 28px 0 0 var(--yoshi-belly),
+    24px 28px 0 0 var(--yoshi-belly),
+    28px 28px 0 0 var(--yoshi-belly),
+    32px 28px 0 0 var(--yoshi-belly),
+    36px 28px 0 0 var(--yoshi-green),
+    40px 28px 0 0 var(--yoshi-green),
+    /* Red saddle on back */
+    36px 24px 0 0 var(--yoshi-shoe),
+    40px 24px 0 0 var(--yoshi-shoe),
+    44px 24px 0 0 var(--yoshi-shoe),
+    36px 28px 0 0 var(--yoshi-shoe),
+    /* Body mid + belly */
+    4px 32px 0 0 var(--yoshi-green),
+    8px 32px 0 0 var(--yoshi-green),
+    12px 32px 0 0 var(--yoshi-green),
+    16px 32px 0 0 var(--yoshi-belly),
+    20px 32px 0 0 var(--yoshi-belly),
+    24px 32px 0 0 var(--yoshi-belly),
+    28px 32px 0 0 var(--yoshi-green),
+    32px 32px 0 0 var(--yoshi-green),
+    /* Legs */
+    8px 36px 0 0 var(--yoshi-green),
+    12px 36px 0 0 var(--yoshi-green),
+    20px 36px 0 0 var(--yoshi-green),
+    24px 36px 0 0 var(--yoshi-green),
+    /* Red spat boots */
+    4px 40px 0 0 var(--yoshi-shoe),
+    8px 40px 0 0 var(--yoshi-shoe),
+    12px 40px 0 0 var(--yoshi-shoe),
+    16px 40px 0 0 var(--yoshi-shoe),
+    20px 40px 0 0 var(--yoshi-shoe),
+    24px 40px 0 0 var(--yoshi-shoe),
+    28px 40px 0 0 var(--yoshi-shoe),
+    32px 40px 0 0 var(--yoshi-shoe);
+}
+
+/* ------ ADULT AVG (Neutral Yoshi — same shape as good, flat eyes/mouth) ------ */
+.pet--adult-avg::before {
+  box-shadow:
+    /* Head top */
+    12px 0px 0 0 var(--yoshi-green),
+    16px 0px 0 0 var(--yoshi-green),
+    20px 0px 0 0 var(--yoshi-green),
+    24px 0px 0 0 var(--yoshi-green),
+    28px 0px 0 0 var(--yoshi-green),
+    32px 0px 0 0 var(--yoshi-dark),
+    36px 0px 0 0 var(--yoshi-dark),
+    /* Head row 1 */
+    8px 4px 0 0 var(--yoshi-green),
+    12px 4px 0 0 var(--yoshi-green),
+    16px 4px 0 0 var(--yoshi-green),
+    20px 4px 0 0 var(--yoshi-green),
+    24px 4px 0 0 var(--yoshi-green),
+    28px 4px 0 0 var(--yoshi-green),
+    32px 4px 0 0 var(--yoshi-green),
+    36px 4px 0 0 var(--yoshi-green),
+    /* Flat line eyes (no arc, no smile, just dots) */
+    4px 8px 0 0 var(--yoshi-green),
+    8px 8px 0 0 var(--yoshi-eye-white),
+    12px 8px 0 0 var(--yoshi-eye-white),
+    16px 8px 0 0 var(--yoshi-green),
+    20px 8px 0 0 var(--yoshi-eye-white),
+    24px 8px 0 0 var(--yoshi-eye-white),
+    28px 8px 0 0 var(--yoshi-green),
+    32px 8px 0 0 var(--yoshi-green),
+    4px 12px 0 0 var(--yoshi-green),
+    8px 12px 0 0 var(--yoshi-pupil),
+    12px 12px 0 0 var(--yoshi-pupil),
+    16px 12px 0 0 var(--yoshi-green),
+    20px 12px 0 0 var(--yoshi-pupil),
+    24px 12px 0 0 var(--yoshi-pupil),
+    28px 12px 0 0 var(--yoshi-green),
+    32px 12px 0 0 var(--yoshi-green),
+    /* Snout orange */
+    4px 16px 0 0 var(--yoshi-green),
+    8px 16px 0 0 var(--yoshi-nose),
+    12px 16px 0 0 var(--yoshi-nose),
+    16px 16px 0 0 var(--yoshi-nose),
+    20px 16px 0 0 var(--yoshi-nose),
+    24px 16px 0 0 var(--yoshi-green),
+    28px 16px 0 0 var(--yoshi-green),
+    32px 16px 0 0 var(--yoshi-green),
+    4px 20px 0 0 var(--yoshi-green),
+    8px 20px 0 0 var(--yoshi-nose),
+    12px 20px 0 0 var(--yoshi-nose),
+    16px 20px 0 0 var(--yoshi-nose),
+    20px 20px 0 0 var(--yoshi-green),
+    24px 20px 0 0 var(--yoshi-green),
+    28px 20px 0 0 var(--yoshi-green),
+    32px 20px 0 0 var(--yoshi-green),
+    /* Flat/neutral mouth — horizontal line */
+    8px 24px 0 0 var(--yoshi-green),
+    12px 24px 0 0 var(--yoshi-dark),
+    16px 24px 0 0 var(--yoshi-dark),
+    20px 24px 0 0 var(--yoshi-dark),
+    24px 24px 0 0 var(--yoshi-green),
+    28px 24px 0 0 var(--yoshi-green),
+    32px 24px 0 0 var(--yoshi-green),
+    /* Body upper + belly */
+    4px 28px 0 0 var(--yoshi-green),
+    8px 28px 0 0 var(--yoshi-green),
+    12px 28px 0 0 var(--yoshi-green),
+    16px 28px 0 0 var(--yoshi-belly),
+    20px 28px 0 0 var(--yoshi-belly),
+    24px 28px 0 0 var(--yoshi-belly),
+    28px 28px 0 0 var(--yoshi-belly),
+    32px 28px 0 0 var(--yoshi-belly),
+    36px 28px 0 0 var(--yoshi-green),
+    40px 28px 0 0 var(--yoshi-green),
+    /* Red saddle (same as adult-good) */
+    36px 24px 0 0 var(--yoshi-shoe),
+    40px 24px 0 0 var(--yoshi-shoe),
+    44px 24px 0 0 var(--yoshi-shoe),
+    36px 28px 0 0 var(--yoshi-shoe),
+    /* Body mid */
+    4px 32px 0 0 var(--yoshi-green),
+    8px 32px 0 0 var(--yoshi-green),
+    12px 32px 0 0 var(--yoshi-green),
+    16px 32px 0 0 var(--yoshi-belly),
+    20px 32px 0 0 var(--yoshi-belly),
+    24px 32px 0 0 var(--yoshi-belly),
+    28px 32px 0 0 var(--yoshi-green),
+    32px 32px 0 0 var(--yoshi-green),
+    /* Legs */
+    8px 36px 0 0 var(--yoshi-green),
+    12px 36px 0 0 var(--yoshi-green),
+    20px 36px 0 0 var(--yoshi-green),
+    24px 36px 0 0 var(--yoshi-green),
+    /* Red boots */
+    4px 40px 0 0 var(--yoshi-shoe),
+    8px 40px 0 0 var(--yoshi-shoe),
+    12px 40px 0 0 var(--yoshi-shoe),
+    16px 40px 0 0 var(--yoshi-shoe),
+    20px 40px 0 0 var(--yoshi-shoe),
+    24px 40px 0 0 var(--yoshi-shoe),
+    28px 40px 0 0 var(--yoshi-shoe),
+    32px 40px 0 0 var(--yoshi-shoe);
+}
+
+/* ------ ADULT BAD (Tired Yoshi — squished, droopy eyes, no saddle) ------ */
+.pet--adult-bad::before {
+  box-shadow:
+    /* Head top — slightly wider/squished */
+    8px 0px 0 0 var(--yoshi-green),
+    12px 0px 0 0 var(--yoshi-green),
+    16px 0px 0 0 var(--yoshi-green),
+    20px 0px 0 0 var(--yoshi-green),
+    24px 0px 0 0 var(--yoshi-green),
+    28px 0px 0 0 var(--yoshi-green),
+    32px 0px 0 0 var(--yoshi-green),
+    /* Head row 1 */
+    4px 4px 0 0 var(--yoshi-green),
+    8px 4px 0 0 var(--yoshi-green),
+    12px 4px 0 0 var(--yoshi-green),
+    16px 4px 0 0 var(--yoshi-green),
+    20px 4px 0 0 var(--yoshi-green),
+    24px 4px 0 0 var(--yoshi-green),
+    28px 4px 0 0 var(--yoshi-green),
+    32px 4px 0 0 var(--yoshi-green),
+    36px 4px 0 0 var(--yoshi-green),
+    /* Droopy half-open eyes — lower pixel of white, pupil low */
+    4px 8px 0 0 var(--yoshi-green),
+    8px 8px 0 0 var(--yoshi-eye-white),
+    12px 8px 0 0 var(--yoshi-eye-white),
+    16px 8px 0 0 var(--yoshi-green),
+    20px 8px 0 0 var(--yoshi-eye-white),
+    24px 8px 0 0 var(--yoshi-eye-white),
+    28px 8px 0 0 var(--yoshi-green),
+    32px 8px 0 0 var(--yoshi-green),
+    /* Pupils drooped low */
+    4px 12px 0 0 var(--yoshi-green),
+    8px 12px 0 0 var(--yoshi-green),
+    12px 12px 0 0 var(--yoshi-pupil),
+    16px 12px 0 0 var(--yoshi-green),
+    20px 12px 0 0 var(--yoshi-green),
+    24px 12px 0 0 var(--yoshi-pupil),
+    28px 12px 0 0 var(--yoshi-green),
+    32px 12px 0 0 var(--yoshi-green),
+    /* Snout */
+    4px 16px 0 0 var(--yoshi-green),
+    8px 16px 0 0 var(--yoshi-nose),
+    12px 16px 0 0 var(--yoshi-nose),
+    16px 16px 0 0 var(--yoshi-nose),
+    20px 16px 0 0 var(--yoshi-nose),
+    24px 16px 0 0 var(--yoshi-green),
+    28px 16px 0 0 var(--yoshi-green),
+    32px 16px 0 0 var(--yoshi-green),
+    4px 20px 0 0 var(--yoshi-green),
+    8px 20px 0 0 var(--yoshi-nose),
+    12px 20px 0 0 var(--yoshi-nose),
+    16px 20px 0 0 var(--yoshi-green),
+    20px 20px 0 0 var(--yoshi-green),
+    24px 20px 0 0 var(--yoshi-green),
+    28px 20px 0 0 var(--yoshi-green),
+    32px 20px 0 0 var(--yoshi-green),
+    /* Slumped frown */
+    8px 24px 0 0 var(--yoshi-green),
+    12px 24px 0 0 var(--yoshi-dark),
+    16px 24px 0 0 var(--yoshi-green),
+    20px 24px 0 0 var(--yoshi-green),
+    24px 24px 0 0 var(--yoshi-green),
+    28px 24px 0 0 var(--yoshi-dark),
+    32px 24px 0 0 var(--yoshi-green),
+    /* Body — wider, squished (1px shorter: fewer rows) */
+    4px 28px 0 0 var(--yoshi-green),
+    8px 28px 0 0 var(--yoshi-green),
+    12px 28px 0 0 var(--yoshi-green),
+    16px 28px 0 0 var(--yoshi-belly),
+    20px 28px 0 0 var(--yoshi-belly),
+    24px 28px 0 0 var(--yoshi-belly),
+    28px 28px 0 0 var(--yoshi-green),
+    32px 28px 0 0 var(--yoshi-green),
+    36px 28px 0 0 var(--yoshi-green),
+    40px 28px 0 0 var(--yoshi-green),
+    /* Body lower */
+    4px 32px 0 0 var(--yoshi-green),
+    8px 32px 0 0 var(--yoshi-green),
+    12px 32px 0 0 var(--yoshi-green),
+    16px 32px 0 0 var(--yoshi-belly),
+    20px 32px 0 0 var(--yoshi-belly),
+    24px 32px 0 0 var(--yoshi-green),
+    28px 32px 0 0 var(--yoshi-green),
+    32px 32px 0 0 var(--yoshi-green),
+    /* Stubby legs */
+    8px 36px 0 0 var(--yoshi-green),
+    12px 36px 0 0 var(--yoshi-green),
+    24px 36px 0 0 var(--yoshi-green),
+    28px 36px 0 0 var(--yoshi-green);
+}
+
+/* ------ DEAD (Yoshi adult-good body, X eyes) ------ */
+.pet--dead::before,
+.death-pet::before {
+  box-shadow:
+    /* Head top */
+    12px 0px 0 0 var(--yoshi-green),
+    16px 0px 0 0 var(--yoshi-green),
+    20px 0px 0 0 var(--yoshi-green),
+    24px 0px 0 0 var(--yoshi-green),
+    28px 0px 0 0 var(--yoshi-green),
+    /* Head row 1 */
+    8px 4px 0 0 var(--yoshi-green),
+    12px 4px 0 0 var(--yoshi-green),
+    16px 4px 0 0 var(--yoshi-green),
+    20px 4px 0 0 var(--yoshi-green),
+    24px 4px 0 0 var(--yoshi-green),
+    28px 4px 0 0 var(--yoshi-green),
+    32px 4px 0 0 var(--yoshi-green),
+    /* X eyes — left eye */
+    8px 8px 0 0 var(--yoshi-pupil),
+    16px 8px 0 0 var(--yoshi-pupil),
+    12px 12px 0 0 var(--yoshi-pupil),
+    8px 16px 0 0 var(--yoshi-pupil),
+    16px 16px 0 0 var(--yoshi-pupil),
+    /* X eyes — right eye */
+    20px 8px 0 0 var(--yoshi-pupil),
+    28px 8px 0 0 var(--yoshi-pupil),
+    24px 12px 0 0 var(--yoshi-pupil),
+    20px 16px 0 0 var(--yoshi-pupil),
+    28px 16px 0 0 var(--yoshi-pupil),
+    /* Snout orange */
+    4px 16px 0 0 var(--yoshi-green),
+    8px 20px 0 0 var(--yoshi-nose),
+    12px 20px 0 0 var(--yoshi-nose),
+    16px 20px 0 0 var(--yoshi-nose),
+    20px 20px 0 0 var(--yoshi-nose),
+    24px 20px 0 0 var(--yoshi-green),
+    /* Wavy dead mouth */
+    8px 24px 0 0 var(--yoshi-green),
+    12px 24px 0 0 var(--yoshi-dark),
+    16px 24px 0 0 var(--yoshi-green),
+    20px 24px 0 0 var(--yoshi-dark),
+    24px 24px 0 0 var(--yoshi-green),
+    28px 24px 0 0 var(--yoshi-green),
+    /* Body + belly */
+    4px 28px 0 0 var(--yoshi-green),
+    8px 28px 0 0 var(--yoshi-green),
+    12px 28px 0 0 var(--yoshi-green),
+    16px 28px 0 0 var(--yoshi-belly),
+    20px 28px 0 0 var(--yoshi-belly),
+    24px 28px 0 0 var(--yoshi-belly),
+    28px 28px 0 0 var(--yoshi-belly),
+    32px 28px 0 0 var(--yoshi-green),
+    36px 28px 0 0 var(--yoshi-green),
+    4px 32px 0 0 var(--yoshi-green),
+    8px 32px 0 0 var(--yoshi-green),
+    12px 32px 0 0 var(--yoshi-green),
+    16px 32px 0 0 var(--yoshi-belly),
+    20px 32px 0 0 var(--yoshi-belly),
+    24px 32px 0 0 var(--yoshi-green),
+    28px 32px 0 0 var(--yoshi-green),
+    /* Legs */
+    8px 36px 0 0 var(--yoshi-green),
+    12px 36px 0 0 var(--yoshi-green),
+    20px 36px 0 0 var(--yoshi-green),
+    24px 36px 0 0 var(--yoshi-green),
+    /* Boots */
+    4px 40px 0 0 var(--yoshi-shoe),
+    8px 40px 0 0 var(--yoshi-shoe),
+    12px 40px 0 0 var(--yoshi-shoe),
+    16px 40px 0 0 var(--yoshi-shoe),
+    20px 40px 0 0 var(--yoshi-shoe),
+    24px 40px 0 0 var(--yoshi-shoe),
+    28px 40px 0 0 var(--yoshi-shoe),
+    32px 40px 0 0 var(--yoshi-shoe);
+}
+
+/* Sleeping — dim sprite */
+.pet--sleeping {
+  filter: brightness(0.55);
+}
+
+/* Sleeping ZZZ overlay */
+.pet--sleeping::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  top: 0;
+  left: 0;
+  /* Three Z pixels floating upper-right */
+  box-shadow:
+    36px 0px 0 0 #ffffff,
+    40px 4px 0 0 #ffffff,
+    36px 4px 0 0 #ffffff,
+    40px 8px 0 0 #ffffff,
+    36px 8px 0 0 #ffffff,
+    44px 0px 0 0 #ffffff,
+    48px 4px 0 0 #aaaaaa,
+    44px 4px 0 0 #aaaaaa,
+    48px 8px 0 0 #aaaaaa;
+}
+
+/* Sick tint — yellow-green hue shift */
+.pet--sick {
+  filter: hue-rotate(55deg) saturate(2) brightness(1.1);
+}
+
+/* Direction facing (for mini-game) */
+.pet.facing-left {
+  transform: translate(-50%, -50%) scaleX(-1);
+}
+
+.pet.facing-right {
+  transform: translate(-50%, -50%) scaleX(1);
+}
+
+/* =====================================================
+   ANIMATIONS
+   ===================================================== */
+
+@keyframes idle {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50%       { transform: translate(-50%, -50%) translateY(-3px); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50%       { transform: translate(-50%, -50%) translateY(-8px); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translate(-50%, -50%) translateX(0); }
+  25%       { transform: translate(-50%, -50%) translateX(-4px); }
+  75%       { transform: translate(-50%, -50%) translateX(4px); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes toastSlide {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  15%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+  80%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+}
+
+.pet.idle {
+  animation: idle 1.8s ease-in-out infinite;
+}
+
+.pet.bouncing {
+  animation: bounce 0.4s ease-in-out 3;
+}
+
+.pet.shaking {
+  animation: shake 0.3s ease-in-out 4;
+}
+
+/* ── Activity animations ─────────────────────────────────── */
+
+/* Walking patrol: step left → flip → step right → flip, 2 s loop */
+@keyframes yoshi-walk {
+  0%   { transform: translate(-50%,-50%) translateX(0)     translateY(0)    scaleX(1);  }
+  12%  { transform: translate(-50%,-50%) translateX(-6px)  translateY(-2px) scaleX(1);  }
+  25%  { transform: translate(-50%,-50%) translateX(-14px) translateY(0)    scaleX(1);  }
+  37%  { transform: translate(-50%,-50%) translateX(-14px) translateY(-2px) scaleX(-1); }
+  50%  { transform: translate(-50%,-50%) translateX(0)     translateY(0)    scaleX(-1); }
+  62%  { transform: translate(-50%,-50%) translateX(6px)   translateY(-2px) scaleX(-1); }
+  75%  { transform: translate(-50%,-50%) translateX(14px)  translateY(0)    scaleX(-1); }
+  87%  { transform: translate(-50%,-50%) translateX(14px)  translateY(-2px) scaleX(1);  }
+  100% { transform: translate(-50%,-50%) translateX(0)     translateY(0)    scaleX(1);  }
+}
+
+/* Dance: rotational bounce, 0.7 s loop */
+@keyframes yoshi-dance {
+  0%   { transform: translate(-50%,-50%) rotate(0deg)   translateY(0)    scaleX(1);  }
+  20%  { transform: translate(-50%,-50%) rotate(-15deg) translateY(-5px) scaleX(1);  }
+  40%  { transform: translate(-50%,-50%) rotate(0deg)   translateY(-8px) scaleX(-1); }
+  60%  { transform: translate(-50%,-50%) rotate(15deg)  translateY(-5px) scaleX(-1); }
+  80%  { transform: translate(-50%,-50%) rotate(0deg)   translateY(-8px) scaleX(1);  }
+  100% { transform: translate(-50%,-50%) rotate(0deg)   translateY(0)    scaleX(1);  }
+}
+
+/* Lie down: tip over → hold with gentle breathing → get up, single 8 s play */
+@keyframes yoshi-liedown {
+  0%   { transform: translate(-50%,-50%) rotate(0deg)   translateY(0);   }
+  15%  { transform: translate(-50%,-50%) rotate(-75deg) translateY(8px); }
+  20%  { transform: translate(-50%,-50%) rotate(-82deg) translateY(10px) scaleX(0.95); }
+  80%  { transform: translate(-50%,-50%) rotate(-82deg) translateY(10px) scaleX(1.05); }
+  85%  { transform: translate(-50%,-50%) rotate(-75deg) translateY(8px); }
+  100% { transform: translate(-50%,-50%) rotate(0deg)   translateY(0);   }
+}
+
+.pet.walking    { animation: yoshi-walk    2s   linear       infinite; }
+.pet.dancing    { animation: yoshi-dance   0.7s ease-in-out  infinite; }
+.pet.lying-down { animation: yoshi-liedown 8s   ease-in-out  1 forwards; }
+
+/* =====================================================
+   STATS
+   ===================================================== */
+
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 4px;
+  border-top: 2px solid var(--device-dark);
+  border-bottom: 2px solid var(--device-dark);
+  margin-bottom: 8px;
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: var(--device-dark);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-width: 48px;
+}
+
+.hearts {
+  display: flex;
+  gap: 4px;
+}
+
+.heart {
+  font-size: 16px;
+  color: var(--lcd-dark);
+  line-height: 1;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.3);
+}
+
+.heart.empty {
+  color: var(--lcd-mid);
+  opacity: 0.5;
+}
+
+/* =====================================================
+   GAME CLOCK
+   ===================================================== */
+
+.game-clock {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--lcd-dark);
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+}
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 8px 12px 12px;
+}
+
+.btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--button-color);
+  border: none;
+  border-radius: 10px;
+  padding: 8px 4px 6px;
+  cursor: pointer;
+  box-shadow:
+    0 4px 0 var(--device-dark),
+    0 5px 6px rgba(0,0,0,0.2);
+  transition: box-shadow 0.1s, transform 0.1s;
+  gap: 2px;
+  min-height: 52px;
+}
+
+.btn:active:not(:disabled) {
+  box-shadow: 0 1px 0 var(--device-dark);
+  transform: translateY(3px);
+}
+
+.btn:disabled {
+  background: var(--button-disabled);
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: 0 2px 0 #78909c;
+}
+
+.btn-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.btn-label {
+  font-size: 9px;
+  color: var(--lcd-dark);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Discipline button active glow */
+#btn-discipline.active-glow {
+  box-shadow:
+    0 4px 0 var(--device-dark),
+    0 0 12px 4px rgba(255, 215, 0, 0.8),
+    inset 0 0 6px rgba(255, 215, 0, 0.4);
+  animation: blink 0.8s infinite;
+}
+
+/* =====================================================
+   POOP AREA
+   ===================================================== */
+
+.poop-area {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.poop-icon {
+  font-size: 18px;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5));
+  animation: idle 2.5s ease-in-out infinite;
+}
+
+/* =====================================================
+   MODALS
+   ===================================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-card {
+  background: var(--lcd-dark);
+  color: var(--lcd-green);
+  border: 3px solid var(--lcd-green);
+  border-radius: 12px;
+  padding: 20px;
+  min-width: 260px;
+  max-width: 320px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-title {
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  text-align: center;
+  color: var(--lcd-green);
+  border-bottom: 1px solid var(--lcd-mid);
+  padding-bottom: 8px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: 1px solid var(--lcd-green);
+  color: var(--lcd-green);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 6px;
+  line-height: 1.4;
+}
+
+.modal-close:hover {
+  background: var(--lcd-green);
+  color: var(--lcd-dark);
+}
+
+/* Feed modal */
+.feed-options {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.feed-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--lcd-mid);
+  border: 2px solid var(--lcd-green);
+  border-radius: 10px;
+  color: var(--lcd-green);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  min-width: 100px;
+}
+
+.feed-btn:hover {
+  background: var(--lcd-green);
+  color: var(--lcd-dark);
+}
+
+.feed-icon {
+  font-size: 28px;
+}
+
+.feed-name {
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.feed-desc {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+/* Status modal */
+.status-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.status-table th,
+.status-table td {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--lcd-mid);
+}
+
+.status-table th {
+  text-align: left;
+  color: var(--lcd-mid);
+  font-weight: normal;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 1px;
+  width: 40%;
+}
+
+.status-table td {
+  color: var(--lcd-green);
+  font-weight: bold;
+}
+
+/* Game modal */
+.game-display {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin-bottom: 10px;
+  border: 1px solid var(--lcd-mid);
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.game-score {
+  text-align: center;
+  font-size: 11px;
+  color: var(--lcd-mid);
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.game-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.game-btn {
+  background: var(--lcd-mid);
+  border: 2px solid var(--lcd-green);
+  border-radius: 8px;
+  color: var(--lcd-green);
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  padding: 10px 18px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.1s;
+}
+
+.game-btn:hover {
+  background: var(--lcd-green);
+  color: var(--lcd-dark);
+}
+
+.game-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.game-feedback {
+  font-size: 24px;
+  text-align: center;
+  padding: 6px 0;
+}
+
+/* =====================================================
+   DEATH SCREEN
+   ===================================================== */
+
+.death-screen {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.death-screen.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.death-card {
+  background: var(--lcd-dark);
+  border: 3px solid var(--lcd-green);
+  border-radius: 16px;
+  padding: 32px 24px;
+  text-align: center;
+  max-width: 300px;
+  width: 90%;
+}
+
+.death-pet {
+  width: 64px;
+  height: 64px;
+  position: relative;
+  margin: 0 auto 16px;
+}
+
+.death-title {
+  font-size: 18px;
+  color: var(--lcd-green);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.death-message {
+  font-size: 12px;
+  color: var(--lcd-mid);
+  margin-bottom: 24px;
+  letter-spacing: 1px;
+  line-height: 1.6;
+}
+
+.new-game-btn {
+  background: var(--lcd-green);
+  color: var(--lcd-dark);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-transform: uppercase;
+  box-shadow: 0 4px 0 var(--lcd-mid);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.new-game-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--lcd-mid);
+}
+
+/* =====================================================
+   TOAST
+   ===================================================== */
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  background: var(--lcd-dark);
+  color: var(--lcd-green);
+  border: 2px solid var(--lcd-green);
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+  z-index: 300;
+  white-space: nowrap;
+  animation: toastSlide 2.2s ease forwards;
+  pointer-events: none;
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 360px) {
+  .device {
+    padding: 14px 14px 20px;
+  }
+  .screen {
+    width: 200px;
+    height: 200px;
+  }
+  .buttons {
+    gap: 4px;
+  }
+  .btn {
+    padding: 6px 2px 4px;
+    min-height: 44px;
+  }
+  .btn-icon {
+    font-size: 15px;
+  }
+}

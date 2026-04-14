@@ -1,0 +1,18 @@
+{
+  "name": "tamagotchi",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test": "vitest run && playwright test",
+    "install:browsers": "playwright install chromium"
+  },
+  "devDependencies": {
+    "vitest": "^2.0.0",
+    "jsdom": "^25.0.0",
+    "@playwright/test": "^1.45.0",
+    "serve": "^14.0.0"
+  }
+}

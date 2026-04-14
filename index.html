@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tamagotchi</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="device">
+
+    <!-- Top decoration -->
+    <div class="device-top">
+      <div class="antenna"></div>
+    </div>
+
+    <!-- Screen area -->
+    <div class="screen-bezel">
+      <div class="screen">
+        <!-- Scanlines overlay -->
+        <div class="scanlines"></div>
+
+        <!-- Sleep overlay -->
+        <div class="sleep-overlay"></div>
+
+        <!-- Alert icons (top-right corner) -->
+        <div class="alert-icons">
+          <span class="icon-attention" title="Attention needed">🔔</span>
+          <span class="icon-skull" title="In danger">💀</span>
+        </div>
+
+        <!-- Pet character -->
+        <div class="pet pet--egg idle"></div>
+
+        <!-- Poop area -->
+        <div class="poop-area"></div>
+      </div>
+    </div>
+
+    <!-- Stats section -->
+    <div class="stats">
+      <div class="stat-row">
+        <span class="stat-label">Hunger</span>
+        <div class="hearts" id="hunger-hearts">
+          <span class="heart">♥</span>
+          <span class="heart">♥</span>
+          <span class="heart">♥</span>
+          <span class="heart">♥</span>
+        </div>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Happy</span>
+        <div class="hearts" id="happy-hearts">
+          <span class="heart">♥</span>
+          <span class="heart">♥</span>
+          <span class="heart">♥</span>
+          <span class="heart">♥</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game clock -->
+    <div class="game-clock" id="game-clock">10:00</div>
+
+    <!-- Buttons -->
+    <div class="buttons">
+      <button id="btn-feed" class="btn" title="Feed your pet">
+        <span class="btn-icon">🍎</span>
+        <span class="btn-label">Feed</span>
+      </button>
+      <button id="btn-play" class="btn" title="Play with your pet">
+        <span class="btn-icon">🎮</span>
+        <span class="btn-label">Play</span>
+      </button>
+      <button id="btn-medicine" class="btn" title="Give medicine">
+        <span class="btn-icon">💊</span>
+        <span class="btn-label">Med</span>
+      </button>
+      <button id="btn-clean" class="btn" title="Clean up">
+        <span class="btn-icon">🚿</span>
+        <span class="btn-label">Clean</span>
+      </button>
+      <button id="btn-light" class="btn" title="Toggle lights">
+        <span class="btn-icon">💡</span>
+        <span class="btn-label">Light</span>
+      </button>
+      <button id="btn-status" class="btn" title="View status">
+        <span class="btn-icon">❤️</span>
+        <span class="btn-label">Status</span>
+      </button>
+      <button id="btn-discipline" class="btn" title="Discipline pet">
+        <span class="btn-icon">👊</span>
+        <span class="btn-label">Disc</span>
+      </button>
+      <button id="btn-sound" class="btn" title="Toggle sound">
+        <span class="btn-icon">🔊</span>
+        <span class="btn-label">Sound</span>
+      </button>
+    </div>
+
+  </div><!-- end .device -->
+
+  <!-- Feed Modal -->
+  <div id="feed-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" data-close="feed-modal">✕</button>
+      <h2 class="modal-title">Feed</h2>
+      <div class="modal-body feed-options">
+        <button id="btn-meal" class="feed-btn">
+          <span class="feed-icon">🍖</span>
+          <span class="feed-name">Meal</span>
+          <span class="feed-desc">+1 Hunger, +1g</span>
+        </button>
+        <button id="btn-snack" class="feed-btn">
+          <span class="feed-icon">🍬</span>
+          <span class="feed-name">Snack</span>
+          <span class="feed-desc">+1 Happy, +2g</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Modal -->
+  <div id="status-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" data-close="status-modal">✕</button>
+      <h2 class="modal-title">Status</h2>
+      <div class="modal-body">
+        <table class="status-table">
+          <tr><th>Stage</th><td id="stat-stage">Egg</td></tr>
+          <tr><th>Age</th><td id="stat-age">0 hrs</td></tr>
+          <tr><th>Weight</th><td id="stat-weight">5g</td></tr>
+          <tr><th>Care Mistakes</th><td id="stat-mistakes">0</td></tr>
+          <tr>
+            <th>Discipline</th>
+            <td id="stat-discipline">
+              <span class="heart">♥</span>
+              <span class="heart empty">♡</span>
+              <span class="heart empty">♡</span>
+              <span class="heart empty">♡</span>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Modal -->
+  <div id="game-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" data-close="game-modal">✕</button>
+      <h2 class="modal-title" id="game-title">Mini Game</h2>
+      <div class="modal-body">
+        <div class="game-display" id="game-display"></div>
+        <div class="game-score" id="game-score">Round: 0 / 5 &nbsp;|&nbsp; Score: 0</div>
+        <div class="game-buttons" id="game-buttons"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Death Screen -->
+  <div id="death-screen" class="death-screen" aria-hidden="true">
+    <div class="death-card">
+      <div class="death-pet pet--dead"></div>
+      <h1 class="death-title">Your pet has passed away</h1>
+      <p class="death-message" id="death-message">It lived a short but meaningful life.</p>
+      <button id="btn-new-game" class="new-game-btn">New Game 🥚</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
