@@ -211,6 +211,82 @@ test('direction game shows ← or → arrow for every subsequent round', async (
   }
 });
 
+// ── Higher/Lower mini-game: number display and round progression ──────────────
+
+test('higher/lower game shows a number and prompt on open', async ({ page }) => {
+  await setState(page, { stage: 'teen', isSick: false, isSleeping: false });
+  await page.click('#btn-play');
+  await expect(page.locator('#game-modal')).toHaveClass(/open/);
+  await expect(page.locator('#game-display')).toContainText(/[1-9]/);
+  await expect(page.locator('#game-display')).toContainText('Higher or lower?');
+});
+
+test('higher/lower game reveals next number prominently after a guess', async ({ page }) => {
+  await setState(page, { stage: 'teen', isSick: false, isSleeping: false });
+  await page.click('#btn-play');
+  await expect(page.locator('#game-modal')).toHaveClass(/open/);
+
+  await page.click('#gbtn-higher');
+
+  // Feedback must show result emoji and the revealed next number
+  await expect(page.locator('#game-display')).toContainText(/[✅❌]/);
+  await expect(page.locator('#game-display')).toContainText(/[1-9]/);
+});
+
+test('higher/lower game updates round counter after each guess', async ({ page }) => {
+  await setState(page, { stage: 'teen', isSick: false, isSleeping: false });
+  await page.click('#btn-play');
+
+  await expect(page.locator('#game-score')).toContainText('Round: 0 / 5');
+
+  await page.click('#gbtn-higher');
+  await expect(page.locator('#game-score')).toContainText('Round: 1 / 5');
+
+  // Wait for next round (1500 ms feedback + buffer)
+  await page.waitForTimeout(1700);
+  await page.click('#gbtn-lower');
+  await expect(page.locator('#game-score')).toContainText('Round: 2 / 5');
+});
+
+test('higher/lower next round shows number revealed in previous feedback', async ({ page }) => {
+  await setState(page, { stage: 'teen', isSick: false, isSleeping: false });
+  await page.click('#btn-play');
+
+  await page.click('#gbtn-higher');
+
+  // Capture revealed next number from feedback (largest digit shown after the →)
+  const feedbackText = await page.locator('#game-display').textContent();
+  const digits = feedbackText.match(/[1-9]/g) || [];
+  const revealedNum = digits[digits.length - 1];
+
+  // Wait for next round to render
+  await page.waitForTimeout(1700);
+
+  const nextRoundText = await page.locator('#game-display').textContent();
+  expect(nextRoundText).toContain(revealedNum);
+  await expect(page.locator('#game-display')).toContainText('Higher or lower?');
+});
+
+test('higher/lower game progresses through all 5 rounds and ends', async ({ page }) => {
+  await setState(page, { stage: 'teen', isSick: false, isSleeping: false });
+  await page.click('#btn-play');
+
+  for (let round = 1; round <= 5; round++) {
+    await expect(page.locator('#game-display')).toContainText(/[1-9]/);
+    await page.click('#gbtn-higher');
+    await expect(page.locator('#game-display')).toContainText(/[✅❌]/);
+
+    if (round < 5) {
+      await page.waitForTimeout(1700);
+      await expect(page.locator('#game-display')).toContainText('Higher or lower?');
+    }
+  }
+
+  // After round 5, game ends (modal closes after endGame timeout)
+  await page.waitForTimeout(1700);
+  await expect(page.locator('#game-modal')).not.toHaveClass(/open/);
+});
+
 // ── Sound toggle ──────────────────────────────────────────────────────────────
 
 test('sound button is visible with speaker icon by default', async ({ page }) => {

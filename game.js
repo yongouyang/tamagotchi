@@ -954,7 +954,7 @@ function renderHigherLowerDisplay() {
     `<div style="text-align:center">
        <div style="font-size:11px; color:#306230; margin-bottom:6px; letter-spacing:1px">Current Number</div>
        <div style="font-size:52px; color:#8bac0f; font-weight:bold">${gameState.currentNum}</div>
-       <div style="font-size:11px; color:#306230; margin-top:6px; letter-spacing:1px">Next number will be...</div>
+       <div style="font-size:11px; color:#306230; margin-top:6px; letter-spacing:1px">Higher or lower?</div>
      </div>`
   );
 }
@@ -981,7 +981,8 @@ function guessHigherLower(guess) {
   setEl('game-display',
     `<div style="text-align:center">
        <div style="font-size:28px">${symbol}</div>
-       <div style="font-size:20px; color:#8bac0f; margin-top:4px">${gameState.currentNum} → ${nextNum}</div>
+       <div style="font-size:11px; color:#306230; margin-top:4px; letter-spacing:1px">${gameState.currentNum} →</div>
+       <div style="font-size:48px; color:#8bac0f; font-weight:bold">${nextNum}</div>
      </div>`
   );
 
@@ -989,14 +990,14 @@ function guessHigherLower(guess) {
   updateGameScore();
 
   if (gameState.round >= 5) {
-    setTimeout(() => endGame(gameState.correct >= 3), 1000);
+    setTimeout(() => endGame(gameState.correct >= 3), 1500);
   } else {
     setTimeout(() => {
       if (!gameState) return;
       gameState.waiting = true;
       setGameBtnsEnabled(true);
       renderHigherLowerDisplay();
-    }, 1000);
+    }, 1500);
   }
 }
 
