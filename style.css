@@ -22,6 +22,25 @@
   --yoshi-pupil:     #1a1a1a;
   --yoshi-egg-spot:  #1c8230;
   --yoshi-egg-base:  #f0ffe0;
+  /* Mendakotchi */
+  --menda-red:       #c0392b;
+  --menda-dark-red:  #922b21;
+  --menda-yellow:    #f1c40f;
+  --menda-cream:     #fce4e4;
+  /* Mermarintchi */
+  --merma-blue:      #5dade2;
+  --merma-dark:      #2e86c1;
+  --merma-pink:      #f1948a;
+  --merma-yellow:    #f9e79f;
+  --merma-skin:      #fde8d8;
+  --merma-lips:      #e74c3c;
+  /* Horhotchi */
+  --horho-purple:    #9b84c4;
+  --horho-dark:      #7d6ba3;
+  --horho-white:     #f0f0f0;
+  --horho-beak:      #e67e22;
+  --horho-yellow:    #f4d03f;
+  --horho-chest:     #d7bde2;
 }
 
 * {
@@ -156,6 +175,27 @@ body {
 .icon-skull.active {
   opacity: 1;
   animation: blink 0.6s infinite;
+}
+
+/* =====================================================
+   PET NAME
+   ===================================================== */
+
+.pet-name {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-size: 9px;
+  font-family: 'Courier New', monospace;
+  color: var(--lcd-green);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  z-index: 9;
+  text-shadow: 0 0 4px var(--lcd-dark);
 }
 
 /* =====================================================
@@ -722,8 +762,8 @@ body {
 }
 
 /* ------ DEAD (Yoshi adult-good body, X eyes) ------ */
-.pet--dead::before,
-.death-pet::before {
+.pet--dead.char--yoshi::before,
+.death-pet.char--yoshi::before {
   box-shadow:
     /* Head top */
     12px 0px 0 0 var(--yoshi-green),
@@ -1364,6 +1404,281 @@ body {
 }
 
 /* =====================================================
+   HISTORY SECTION (inside status modal)
+   ===================================================== */
+
+.status-history-section {
+  margin-top: 12px;
+  border-top: 1px solid var(--lcd-mid);
+  padding-top: 10px;
+}
+
+.history-toggle-btn,
+.history-back-btn {
+  background: none;
+  border: 1px solid var(--lcd-green);
+  color: var(--lcd-green);
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.history-toggle-btn:hover,
+.history-back-btn:hover {
+  background: var(--lcd-green);
+  color: var(--lcd-dark);
+}
+
+.history-list {
+  margin-top: 8px;
+}
+
+.history-entries {
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.history-entry {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--lcd-mid);
+}
+
+.history-name {
+  display: block;
+  font-size: 13px;
+  color: var(--lcd-green);
+  font-weight: bold;
+}
+
+.history-detail {
+  display: block;
+  font-size: 10px;
+  color: var(--lcd-mid);
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+.history-empty {
+  font-size: 11px;
+  color: var(--lcd-mid);
+  text-align: center;
+  padding: 12px 0;
+  letter-spacing: 1px;
+}
+
+/* =====================================================
+   SETUP SCREEN
+   ===================================================== */
+
+.setup-screen {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.setup-screen.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.setup-card {
+  background: var(--lcd-dark);
+  border: 3px solid var(--lcd-green);
+  border-radius: 16px;
+  padding: 24px 20px;
+  max-width: 340px;
+  width: 94%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.setup-title {
+  font-size: 18px;
+  color: var(--lcd-green);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-align: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--lcd-mid);
+  padding-bottom: 10px;
+}
+
+.setup-section {
+  margin-bottom: 16px;
+}
+
+.setup-label {
+  display: block;
+  font-size: 10px;
+  color: var(--lcd-mid);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.setup-input {
+  width: 100%;
+  background: var(--lcd-mid);
+  border: 2px solid var(--lcd-green);
+  border-radius: 6px;
+  color: var(--lcd-green);
+  font-family: 'Courier New', monospace;
+  font-size: 15px;
+  padding: 8px 10px;
+  letter-spacing: 2px;
+  outline: none;
+}
+
+.setup-input::placeholder {
+  color: #3a5a2a;
+  letter-spacing: 1px;
+}
+
+.setup-input:focus {
+  border-color: var(--lcd-green);
+  box-shadow: 0 0 6px rgba(139, 172, 15, 0.4);
+}
+
+.char-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.char-card {
+  background: var(--lcd-mid);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 10px 8px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  position: relative;
+}
+
+.char-card:hover {
+  border-color: var(--lcd-green);
+}
+
+.char-card.selected {
+  border-color: var(--lcd-green);
+  background: rgba(139, 172, 15, 0.15);
+  box-shadow: 0 0 8px rgba(139, 172, 15, 0.3);
+}
+
+.char-card-preview {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 6px;
+  position: relative;
+}
+
+.char-card-preview::before {
+  content: '';
+  display: block;
+  position: absolute;
+  width: var(--pixel);
+  height: var(--pixel);
+  top: 0;
+  left: 0;
+}
+
+.char-card-name {
+  font-size: 10px;
+  color: var(--lcd-green);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.char-in-progress {
+  display: block;
+  font-size: 8px;
+  color: var(--lcd-green);
+  background: rgba(139, 172, 15, 0.2);
+  border: 1px solid var(--lcd-green);
+  border-radius: 3px;
+  padding: 1px 4px;
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+
+.char-info {
+  min-height: 60px;
+  padding: 10px;
+  border: 1px solid var(--lcd-mid);
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.char-info-name {
+  font-size: 14px;
+  color: var(--lcd-green);
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+
+.char-info-type {
+  font-size: 10px;
+  color: var(--lcd-mid);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.char-info-trait {
+  font-size: 11px;
+  color: var(--lcd-green);
+  margin-bottom: 4px;
+}
+
+.char-info-desc {
+  font-size: 10px;
+  color: var(--lcd-mid);
+  line-height: 1.5;
+  letter-spacing: 0.5px;
+}
+
+.start-game-btn {
+  width: 100%;
+  background: var(--lcd-green);
+  color: var(--lcd-dark);
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--lcd-mid);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.start-game-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: 0 2px 0 var(--lcd-mid);
+}
+
+.start-game-btn:not(:disabled):active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--lcd-mid);
+}
+
+/* =====================================================
    RESPONSIVE
    ===================================================== */
 
@@ -1385,4 +1700,482 @@ body {
   .btn-icon {
     font-size: 15px;
   }
+}
+
+/* =====================================================
+   MENDAKOTCHI — Flapjack Octopus (red blob)
+   ===================================================== */
+
+/* EGG */
+.pet--egg.char--mendakotchi::before {
+  box-shadow:
+    8px 0px 0 0 var(--menda-cream),  16px 0px 0 0 var(--menda-cream),  24px 0px 0 0 var(--menda-cream),
+    4px 4px 0 0 var(--menda-cream),  8px 4px 0 0 var(--menda-cream),   12px 4px 0 0 var(--menda-cream),  16px 4px 0 0 var(--menda-cream),  20px 4px 0 0 var(--menda-cream),  24px 4px 0 0 var(--menda-cream),  28px 4px 0 0 var(--menda-cream),
+    0px 8px 0 0 var(--menda-cream),  4px 8px 0 0 var(--menda-cream),   8px 8px 0 0 var(--menda-cream),  12px 8px 0 0 var(--menda-cream),  16px 8px 0 0 var(--menda-cream),  20px 8px 0 0 var(--menda-cream),  24px 8px 0 0 var(--menda-cream),  28px 8px 0 0 var(--menda-cream),  32px 8px 0 0 var(--menda-cream),
+    0px 12px 0 0 var(--menda-cream), 4px 12px 0 0 var(--menda-cream),  8px 12px 0 0 var(--menda-cream), 12px 12px 0 0 var(--menda-cream), 16px 12px 0 0 var(--menda-cream), 20px 12px 0 0 var(--menda-cream), 24px 12px 0 0 var(--menda-cream), 28px 12px 0 0 var(--menda-cream), 32px 12px 0 0 var(--menda-cream),
+    0px 16px 0 0 var(--menda-cream), 4px 16px 0 0 var(--menda-cream),  8px 16px 0 0 var(--menda-cream), 12px 16px 0 0 var(--menda-cream), 16px 16px 0 0 var(--menda-cream), 20px 16px 0 0 var(--menda-cream), 24px 16px 0 0 var(--menda-cream), 28px 16px 0 0 var(--menda-cream), 32px 16px 0 0 var(--menda-cream),
+    0px 20px 0 0 var(--menda-cream), 4px 20px 0 0 var(--menda-cream),  8px 20px 0 0 var(--menda-cream), 12px 20px 0 0 var(--menda-cream), 16px 20px 0 0 var(--menda-cream), 20px 20px 0 0 var(--menda-cream), 24px 20px 0 0 var(--menda-cream), 28px 20px 0 0 var(--menda-cream), 32px 20px 0 0 var(--menda-cream),
+    0px 24px 0 0 var(--menda-cream), 4px 24px 0 0 var(--menda-cream),  8px 24px 0 0 var(--menda-cream), 12px 24px 0 0 var(--menda-cream), 16px 24px 0 0 var(--menda-cream), 20px 24px 0 0 var(--menda-cream), 24px 24px 0 0 var(--menda-cream), 28px 24px 0 0 var(--menda-cream), 32px 24px 0 0 var(--menda-cream),
+    4px 28px 0 0 var(--menda-cream),  8px 28px 0 0 var(--menda-cream), 12px 28px 0 0 var(--menda-cream), 16px 28px 0 0 var(--menda-cream), 20px 28px 0 0 var(--menda-cream), 24px 28px 0 0 var(--menda-cream), 28px 28px 0 0 var(--menda-cream),
+    8px 32px 0 0 var(--menda-cream),  12px 32px 0 0 var(--menda-cream), 16px 32px 0 0 var(--menda-cream), 20px 32px 0 0 var(--menda-cream), 24px 32px 0 0 var(--menda-cream),
+    /* red round spots */
+    16px 4px 0 0 var(--menda-red),
+    8px 12px 0 0 var(--menda-red),  24px 12px 0 0 var(--menda-red),
+    16px 20px 0 0 var(--menda-red),
+    8px 28px 0 0 var(--menda-red),  24px 28px 0 0 var(--menda-red);
+}
+
+/* BABY */
+.pet--baby.char--mendakotchi::before {
+  box-shadow:
+    /* body */
+    8px 4px 0 0 var(--menda-red),   12px 4px 0 0 var(--menda-red),   16px 4px 0 0 var(--menda-red),   20px 4px 0 0 var(--menda-red),
+    4px 8px 0 0 var(--menda-red),   8px 8px 0 0 var(--menda-red),    12px 8px 0 0 var(--menda-red),   16px 8px 0 0 var(--menda-red),   20px 8px 0 0 var(--menda-red),   24px 8px 0 0 var(--menda-red),
+    4px 12px 0 0 var(--menda-red),  8px 12px 0 0 var(--yoshi-pupil), 12px 12px 0 0 var(--menda-red),  16px 12px 0 0 var(--menda-red),  20px 12px 0 0 var(--yoshi-pupil), 24px 12px 0 0 var(--menda-red),
+    /* cheeks */
+    8px 16px 0 0 var(--menda-yellow),  12px 16px 0 0 var(--menda-red),  16px 16px 0 0 var(--menda-dark-red), 20px 16px 0 0 var(--menda-red),  24px 16px 0 0 var(--menda-yellow),
+    /* smile */
+    8px 20px 0 0 var(--menda-red),   12px 20px 0 0 var(--menda-dark-red), 16px 20px 0 0 var(--menda-dark-red), 20px 20px 0 0 var(--menda-dark-red), 24px 20px 0 0 var(--menda-red),
+    /* tentacle nubs */
+    8px 24px 0 0 var(--menda-red),   16px 24px 0 0 var(--menda-red),   24px 24px 0 0 var(--menda-red),
+    4px 28px 0 0 var(--menda-dark-red), 20px 28px 0 0 var(--menda-dark-red);
+}
+
+/* CHILD */
+.pet--child.char--mendakotchi::before {
+  box-shadow:
+    /* body */
+    8px 0px 0 0 var(--menda-red),   12px 0px 0 0 var(--menda-red),   16px 0px 0 0 var(--menda-red),   20px 0px 0 0 var(--menda-red),   24px 0px 0 0 var(--menda-red),
+    4px 4px 0 0 var(--menda-red),   8px 4px 0 0 var(--menda-red),    12px 4px 0 0 var(--menda-red),   16px 4px 0 0 var(--menda-red),   20px 4px 0 0 var(--menda-red),   24px 4px 0 0 var(--menda-red),   28px 4px 0 0 var(--menda-red),
+    /* ear fins */
+    0px 4px 0 0 var(--menda-dark-red),  32px 4px 0 0 var(--menda-dark-red),
+    /* eyes */
+    4px 8px 0 0 var(--menda-red),   8px 8px 0 0 var(--yoshi-eye-white), 12px 8px 0 0 var(--yoshi-pupil), 16px 8px 0 0 var(--menda-red),   20px 8px 0 0 var(--yoshi-eye-white), 24px 8px 0 0 var(--yoshi-pupil), 28px 8px 0 0 var(--menda-red),
+    /* cheeks */
+    4px 12px 0 0 var(--menda-red),  8px 12px 0 0 var(--menda-yellow), 12px 12px 0 0 var(--menda-red),  16px 12px 0 0 var(--menda-red),  20px 12px 0 0 var(--menda-red),  24px 12px 0 0 var(--menda-yellow), 28px 12px 0 0 var(--menda-red),
+    /* smile */
+    8px 16px 0 0 var(--menda-red),  12px 16px 0 0 var(--menda-dark-red), 16px 16px 0 0 var(--menda-dark-red), 20px 16px 0 0 var(--menda-dark-red), 24px 16px 0 0 var(--menda-red),
+    /* body lower */
+    4px 20px 0 0 var(--menda-red),  8px 20px 0 0 var(--menda-red),   12px 20px 0 0 var(--menda-red),  16px 20px 0 0 var(--menda-red),  20px 20px 0 0 var(--menda-red),  24px 20px 0 0 var(--menda-red),  28px 20px 0 0 var(--menda-red),
+    /* tentacles */
+    4px 24px 0 0 var(--menda-red),  8px 24px 0 0 var(--menda-red),   12px 24px 0 0 var(--menda-red),  16px 24px 0 0 var(--menda-red),  20px 24px 0 0 var(--menda-red),  24px 24px 0 0 var(--menda-red),
+    0px 28px 0 0 var(--menda-dark-red), 8px 28px 0 0 var(--menda-dark-red), 16px 28px 0 0 var(--menda-dark-red), 24px 28px 0 0 var(--menda-dark-red),
+    4px 32px 0 0 var(--menda-dark-red), 12px 32px 0 0 var(--menda-dark-red), 20px 32px 0 0 var(--menda-dark-red), 28px 32px 0 0 var(--menda-dark-red);
+}
+
+/* TEEN */
+.pet--teen.char--mendakotchi::before {
+  box-shadow:
+    8px 0px 0 0 var(--menda-red),   12px 0px 0 0 var(--menda-red),   16px 0px 0 0 var(--menda-red),   20px 0px 0 0 var(--menda-red),   24px 0px 0 0 var(--menda-red),
+    0px 4px 0 0 var(--menda-dark-red), 4px 4px 0 0 var(--menda-red), 8px 4px 0 0 var(--menda-red), 12px 4px 0 0 var(--menda-red), 16px 4px 0 0 var(--menda-red), 20px 4px 0 0 var(--menda-red), 24px 4px 0 0 var(--menda-red), 28px 4px 0 0 var(--menda-red), 32px 4px 0 0 var(--menda-dark-red),
+    0px 8px 0 0 var(--menda-dark-red), 4px 8px 0 0 var(--menda-red), 8px 8px 0 0 var(--yoshi-eye-white), 12px 8px 0 0 var(--yoshi-pupil), 16px 8px 0 0 var(--menda-red), 20px 8px 0 0 var(--yoshi-eye-white), 24px 8px 0 0 var(--yoshi-pupil), 28px 8px 0 0 var(--menda-red), 32px 8px 0 0 var(--menda-dark-red),
+    4px 12px 0 0 var(--menda-red),  8px 12px 0 0 var(--menda-yellow), 12px 12px 0 0 var(--menda-red), 16px 12px 0 0 var(--menda-red), 20px 12px 0 0 var(--menda-red), 24px 12px 0 0 var(--menda-yellow), 28px 12px 0 0 var(--menda-red),
+    4px 16px 0 0 var(--menda-red),  12px 16px 0 0 var(--menda-dark-red), 16px 16px 0 0 var(--menda-dark-red), 20px 16px 0 0 var(--menda-dark-red), 28px 16px 0 0 var(--menda-red),
+    4px 20px 0 0 var(--menda-red),  8px 20px 0 0 var(--menda-red), 12px 20px 0 0 var(--menda-red), 16px 20px 0 0 var(--menda-red), 20px 20px 0 0 var(--menda-red), 24px 20px 0 0 var(--menda-red), 28px 20px 0 0 var(--menda-red),
+    0px 24px 0 0 var(--menda-red),  4px 24px 0 0 var(--menda-red),  8px 24px 0 0 var(--menda-red),  12px 24px 0 0 var(--menda-red),  16px 24px 0 0 var(--menda-red),  20px 24px 0 0 var(--menda-red),  24px 24px 0 0 var(--menda-red),  28px 24px 0 0 var(--menda-red),  32px 24px 0 0 var(--menda-red),
+    0px 28px 0 0 var(--menda-dark-red), 8px 28px 0 0 var(--menda-dark-red), 16px 28px 0 0 var(--menda-dark-red), 24px 28px 0 0 var(--menda-dark-red), 32px 28px 0 0 var(--menda-dark-red),
+    4px 32px 0 0 var(--menda-dark-red), 12px 32px 0 0 var(--menda-dark-red), 20px 32px 0 0 var(--menda-dark-red), 28px 32px 0 0 var(--menda-dark-red);
+}
+
+/* ADULT GOOD */
+.pet--adult-good.char--mendakotchi::before {
+  box-shadow:
+    8px 0px 0 0 var(--menda-red), 12px 0px 0 0 var(--menda-red), 16px 0px 0 0 var(--menda-red), 20px 0px 0 0 var(--menda-red), 24px 0px 0 0 var(--menda-red), 28px 0px 0 0 var(--menda-red),
+    0px 4px 0 0 var(--menda-dark-red), 4px 4px 0 0 var(--menda-red), 8px 4px 0 0 var(--menda-red), 12px 4px 0 0 var(--menda-red), 16px 4px 0 0 var(--menda-red), 20px 4px 0 0 var(--menda-red), 24px 4px 0 0 var(--menda-red), 28px 4px 0 0 var(--menda-red), 32px 4px 0 0 var(--menda-red), 36px 4px 0 0 var(--menda-dark-red),
+    0px 8px 0 0 var(--menda-red), 4px 8px 0 0 var(--menda-red), 8px 8px 0 0 var(--yoshi-eye-white), 12px 8px 0 0 var(--yoshi-eye-white), 16px 8px 0 0 var(--menda-red), 20px 8px 0 0 var(--yoshi-eye-white), 24px 8px 0 0 var(--yoshi-eye-white), 28px 8px 0 0 var(--menda-red), 32px 8px 0 0 var(--menda-red), 36px 8px 0 0 var(--menda-red),
+    0px 12px 0 0 var(--menda-red), 4px 12px 0 0 var(--menda-red), 8px 12px 0 0 var(--yoshi-pupil), 12px 12px 0 0 var(--yoshi-eye-white), 16px 12px 0 0 var(--menda-red), 20px 12px 0 0 var(--yoshi-pupil), 24px 12px 0 0 var(--yoshi-eye-white), 28px 12px 0 0 var(--menda-red), 32px 12px 0 0 var(--menda-red),
+    4px 16px 0 0 var(--menda-red), 8px 16px 0 0 var(--menda-yellow), 12px 16px 0 0 var(--menda-red), 16px 16px 0 0 var(--menda-dark-red), 20px 16px 0 0 var(--menda-dark-red), 24px 16px 0 0 var(--menda-red), 28px 16px 0 0 var(--menda-yellow), 32px 16px 0 0 var(--menda-red),
+    4px 20px 0 0 var(--menda-red), 8px 20px 0 0 var(--menda-red), 12px 20px 0 0 var(--menda-dark-red), 16px 20px 0 0 var(--menda-dark-red), 20px 20px 0 0 var(--menda-dark-red), 24px 20px 0 0 var(--menda-red), 28px 20px 0 0 var(--menda-red),
+    0px 24px 0 0 var(--menda-red), 4px 24px 0 0 var(--menda-red), 8px 24px 0 0 var(--menda-red), 12px 24px 0 0 var(--menda-red), 16px 24px 0 0 var(--menda-red), 20px 24px 0 0 var(--menda-red), 24px 24px 0 0 var(--menda-red), 28px 24px 0 0 var(--menda-red), 32px 24px 0 0 var(--menda-red), 36px 24px 0 0 var(--menda-red),
+    0px 28px 0 0 var(--menda-dark-red), 4px 28px 0 0 var(--menda-dark-red), 8px 28px 0 0 var(--menda-dark-red), 12px 28px 0 0 var(--menda-dark-red), 16px 28px 0 0 var(--menda-dark-red), 20px 28px 0 0 var(--menda-dark-red), 24px 28px 0 0 var(--menda-dark-red), 28px 28px 0 0 var(--menda-dark-red), 32px 28px 0 0 var(--menda-dark-red), 36px 28px 0 0 var(--menda-dark-red),
+    0px 32px 0 0 var(--menda-dark-red), 8px 32px 0 0 var(--menda-dark-red), 16px 32px 0 0 var(--menda-dark-red), 24px 32px 0 0 var(--menda-dark-red), 32px 32px 0 0 var(--menda-dark-red),
+    4px 36px 0 0 var(--menda-dark-red), 12px 36px 0 0 var(--menda-dark-red), 20px 36px 0 0 var(--menda-dark-red), 28px 36px 0 0 var(--menda-dark-red);
+}
+
+/* ADULT AVG */
+.pet--adult-avg.char--mendakotchi::before {
+  box-shadow:
+    8px 0px 0 0 var(--menda-red), 12px 0px 0 0 var(--menda-red), 16px 0px 0 0 var(--menda-red), 20px 0px 0 0 var(--menda-red), 24px 0px 0 0 var(--menda-red), 28px 0px 0 0 var(--menda-red),
+    0px 4px 0 0 var(--menda-dark-red), 4px 4px 0 0 var(--menda-red), 8px 4px 0 0 var(--menda-red), 12px 4px 0 0 var(--menda-red), 16px 4px 0 0 var(--menda-red), 20px 4px 0 0 var(--menda-red), 24px 4px 0 0 var(--menda-red), 28px 4px 0 0 var(--menda-red), 32px 4px 0 0 var(--menda-red), 36px 4px 0 0 var(--menda-dark-red),
+    0px 8px 0 0 var(--menda-red), 4px 8px 0 0 var(--menda-red), 8px 8px 0 0 var(--yoshi-eye-white), 12px 8px 0 0 var(--yoshi-eye-white), 16px 8px 0 0 var(--menda-red), 20px 8px 0 0 var(--yoshi-eye-white), 24px 8px 0 0 var(--yoshi-eye-white), 28px 8px 0 0 var(--menda-red),
+    0px 12px 0 0 var(--menda-red), 4px 12px 0 0 var(--menda-red), 8px 12px 0 0 var(--yoshi-pupil), 12px 12px 0 0 var(--yoshi-pupil), 16px 12px 0 0 var(--menda-red), 20px 12px 0 0 var(--yoshi-pupil), 24px 12px 0 0 var(--yoshi-pupil), 28px 12px 0 0 var(--menda-red),
+    4px 16px 0 0 var(--menda-red), 8px 16px 0 0 var(--menda-yellow), 12px 16px 0 0 var(--menda-red), 16px 16px 0 0 var(--menda-dark-red), 20px 16px 0 0 var(--menda-dark-red), 24px 16px 0 0 var(--menda-dark-red), 28px 16px 0 0 var(--menda-yellow), 32px 16px 0 0 var(--menda-red),
+    4px 20px 0 0 var(--menda-red), 8px 20px 0 0 var(--menda-red), 12px 20px 0 0 var(--menda-red), 16px 20px 0 0 var(--menda-red), 20px 20px 0 0 var(--menda-red), 24px 20px 0 0 var(--menda-red), 28px 20px 0 0 var(--menda-red),
+    0px 24px 0 0 var(--menda-red), 4px 24px 0 0 var(--menda-red), 8px 24px 0 0 var(--menda-red), 12px 24px 0 0 var(--menda-red), 16px 24px 0 0 var(--menda-red), 20px 24px 0 0 var(--menda-red), 24px 24px 0 0 var(--menda-red), 28px 24px 0 0 var(--menda-red), 32px 24px 0 0 var(--menda-red), 36px 24px 0 0 var(--menda-red),
+    0px 28px 0 0 var(--menda-dark-red), 4px 28px 0 0 var(--menda-dark-red), 8px 28px 0 0 var(--menda-dark-red), 12px 28px 0 0 var(--menda-dark-red), 16px 28px 0 0 var(--menda-dark-red), 20px 28px 0 0 var(--menda-dark-red), 24px 28px 0 0 var(--menda-dark-red), 28px 28px 0 0 var(--menda-dark-red), 32px 28px 0 0 var(--menda-dark-red), 36px 28px 0 0 var(--menda-dark-red),
+    0px 32px 0 0 var(--menda-dark-red), 8px 32px 0 0 var(--menda-dark-red), 16px 32px 0 0 var(--menda-dark-red), 24px 32px 0 0 var(--menda-dark-red), 32px 32px 0 0 var(--menda-dark-red),
+    4px 36px 0 0 var(--menda-dark-red), 12px 36px 0 0 var(--menda-dark-red), 20px 36px 0 0 var(--menda-dark-red), 28px 36px 0 0 var(--menda-dark-red);
+}
+
+/* ADULT BAD */
+.pet--adult-bad.char--mendakotchi::before {
+  box-shadow:
+    4px 0px 0 0 var(--menda-red), 8px 0px 0 0 var(--menda-red), 12px 0px 0 0 var(--menda-red), 16px 0px 0 0 var(--menda-red), 20px 0px 0 0 var(--menda-red), 24px 0px 0 0 var(--menda-red), 28px 0px 0 0 var(--menda-red), 32px 0px 0 0 var(--menda-red),
+    0px 4px 0 0 var(--menda-dark-red), 4px 4px 0 0 var(--menda-red), 8px 4px 0 0 var(--menda-red), 12px 4px 0 0 var(--menda-red), 16px 4px 0 0 var(--menda-red), 20px 4px 0 0 var(--menda-red), 24px 4px 0 0 var(--menda-red), 28px 4px 0 0 var(--menda-red), 32px 4px 0 0 var(--menda-red), 36px 4px 0 0 var(--menda-dark-red),
+    0px 8px 0 0 var(--menda-dark-red), 4px 8px 0 0 var(--menda-red), 8px 8px 0 0 var(--yoshi-eye-white), 12px 8px 0 0 var(--yoshi-eye-white), 16px 8px 0 0 var(--menda-red), 20px 8px 0 0 var(--yoshi-eye-white), 24px 8px 0 0 var(--yoshi-eye-white), 28px 8px 0 0 var(--menda-red), 32px 8px 0 0 var(--menda-dark-red),
+    0px 12px 0 0 var(--menda-dark-red), 4px 12px 0 0 var(--menda-red), 8px 12px 0 0 var(--menda-red), 12px 12px 0 0 var(--yoshi-pupil), 16px 12px 0 0 var(--menda-red), 20px 12px 0 0 var(--menda-red), 24px 12px 0 0 var(--yoshi-pupil), 28px 12px 0 0 var(--menda-red), 32px 12px 0 0 var(--menda-dark-red),
+    4px 16px 0 0 var(--menda-red), 8px 16px 0 0 var(--menda-yellow), 12px 16px 0 0 var(--menda-red), 16px 16px 0 0 var(--menda-dark-red), 20px 16px 0 0 var(--menda-red), 24px 16px 0 0 var(--menda-dark-red), 28px 16px 0 0 var(--menda-yellow), 32px 16px 0 0 var(--menda-red),
+    4px 20px 0 0 var(--menda-dark-red), 8px 20px 0 0 var(--menda-red), 12px 20px 0 0 var(--menda-red), 16px 20px 0 0 var(--menda-red), 20px 20px 0 0 var(--menda-dark-red), 24px 20px 0 0 var(--menda-red), 28px 20px 0 0 var(--menda-dark-red),
+    0px 24px 0 0 var(--menda-red), 4px 24px 0 0 var(--menda-red), 8px 24px 0 0 var(--menda-red), 12px 24px 0 0 var(--menda-red), 16px 24px 0 0 var(--menda-red), 20px 24px 0 0 var(--menda-red), 24px 24px 0 0 var(--menda-red), 28px 24px 0 0 var(--menda-red), 32px 24px 0 0 var(--menda-red), 36px 24px 0 0 var(--menda-red),
+    0px 28px 0 0 var(--menda-dark-red), 4px 28px 0 0 var(--menda-dark-red), 8px 28px 0 0 var(--menda-dark-red), 12px 28px 0 0 var(--menda-dark-red), 16px 28px 0 0 var(--menda-dark-red), 20px 28px 0 0 var(--menda-dark-red), 24px 28px 0 0 var(--menda-dark-red), 28px 28px 0 0 var(--menda-dark-red), 32px 28px 0 0 var(--menda-dark-red), 36px 28px 0 0 var(--menda-dark-red),
+    0px 32px 0 0 var(--menda-dark-red), 8px 32px 0 0 var(--menda-dark-red), 16px 32px 0 0 var(--menda-dark-red), 24px 32px 0 0 var(--menda-dark-red), 32px 32px 0 0 var(--menda-dark-red);
+}
+
+/* DEAD */
+.pet--dead.char--mendakotchi::before,
+.death-pet.char--mendakotchi::before {
+  box-shadow:
+    8px 0px 0 0 var(--menda-red), 12px 0px 0 0 var(--menda-red), 16px 0px 0 0 var(--menda-red), 20px 0px 0 0 var(--menda-red), 24px 0px 0 0 var(--menda-red), 28px 0px 0 0 var(--menda-red),
+    0px 4px 0 0 var(--menda-dark-red), 4px 4px 0 0 var(--menda-red), 8px 4px 0 0 var(--menda-red), 12px 4px 0 0 var(--menda-red), 16px 4px 0 0 var(--menda-red), 20px 4px 0 0 var(--menda-red), 24px 4px 0 0 var(--menda-red), 28px 4px 0 0 var(--menda-red), 32px 4px 0 0 var(--menda-red), 36px 4px 0 0 var(--menda-dark-red),
+    /* X eyes */
+    4px 8px 0 0 var(--yoshi-pupil), 12px 8px 0 0 var(--yoshi-pupil), 20px 8px 0 0 var(--yoshi-pupil), 28px 8px 0 0 var(--yoshi-pupil),
+    8px 12px 0 0 var(--yoshi-pupil), 24px 12px 0 0 var(--yoshi-pupil),
+    4px 16px 0 0 var(--yoshi-pupil), 12px 16px 0 0 var(--yoshi-pupil), 20px 16px 0 0 var(--yoshi-pupil), 28px 16px 0 0 var(--yoshi-pupil),
+    /* cheeks + wavy mouth */
+    8px 16px 0 0 var(--menda-yellow), 28px 16px 0 0 var(--menda-yellow),
+    8px 20px 0 0 var(--menda-red), 12px 20px 0 0 var(--menda-dark-red), 16px 20px 0 0 var(--menda-red), 20px 20px 0 0 var(--menda-dark-red), 24px 20px 0 0 var(--menda-red),
+    0px 24px 0 0 var(--menda-red), 4px 24px 0 0 var(--menda-red), 8px 24px 0 0 var(--menda-red), 12px 24px 0 0 var(--menda-red), 16px 24px 0 0 var(--menda-red), 20px 24px 0 0 var(--menda-red), 24px 24px 0 0 var(--menda-red), 28px 24px 0 0 var(--menda-red), 32px 24px 0 0 var(--menda-red), 36px 24px 0 0 var(--menda-red),
+    0px 28px 0 0 var(--menda-dark-red), 8px 28px 0 0 var(--menda-dark-red), 16px 28px 0 0 var(--menda-dark-red), 24px 28px 0 0 var(--menda-dark-red), 32px 28px 0 0 var(--menda-dark-red),
+    4px 32px 0 0 var(--menda-dark-red), 12px 32px 0 0 var(--menda-dark-red), 20px 32px 0 0 var(--menda-dark-red), 28px 32px 0 0 var(--menda-dark-red);
+}
+
+/* Setup screen preview */
+.char-preview--mendakotchi::before {
+  box-shadow:
+    8px 4px 0 0 var(--menda-red), 12px 4px 0 0 var(--menda-red), 16px 4px 0 0 var(--menda-red), 20px 4px 0 0 var(--menda-red),
+    4px 8px 0 0 var(--menda-red), 8px 8px 0 0 var(--yoshi-pupil), 12px 8px 0 0 var(--menda-red), 16px 8px 0 0 var(--yoshi-pupil), 20px 8px 0 0 var(--menda-red), 24px 8px 0 0 var(--menda-red),
+    4px 12px 0 0 var(--menda-yellow), 8px 12px 0 0 var(--menda-red), 12px 12px 0 0 var(--menda-dark-red), 16px 12px 0 0 var(--menda-red), 20px 12px 0 0 var(--menda-yellow),
+    4px 16px 0 0 var(--menda-red), 8px 16px 0 0 var(--menda-red), 12px 16px 0 0 var(--menda-red), 16px 16px 0 0 var(--menda-red), 20px 16px 0 0 var(--menda-red),
+    4px 20px 0 0 var(--menda-dark-red), 12px 20px 0 0 var(--menda-dark-red), 20px 20px 0 0 var(--menda-dark-red);
+}
+
+/* Setup screen preview — Yoshi */
+.char-preview--yoshi::before {
+  box-shadow:
+    8px 4px 0 0 var(--yoshi-green), 12px 4px 0 0 var(--yoshi-green), 16px 4px 0 0 var(--yoshi-green), 20px 4px 0 0 var(--yoshi-green),
+    4px 8px 0 0 var(--yoshi-green), 8px 8px 0 0 var(--yoshi-pupil), 12px 8px 0 0 var(--yoshi-green), 16px 8px 0 0 var(--yoshi-pupil), 20px 8px 0 0 var(--yoshi-green), 24px 8px 0 0 var(--yoshi-green),
+    4px 12px 0 0 var(--yoshi-green), 8px 12px 0 0 var(--yoshi-nose), 12px 12px 0 0 var(--yoshi-nose), 16px 12px 0 0 var(--yoshi-dark), 20px 12px 0 0 var(--yoshi-green), 24px 12px 0 0 var(--yoshi-green),
+    4px 16px 0 0 var(--yoshi-green), 8px 16px 0 0 var(--yoshi-green), 12px 16px 0 0 var(--yoshi-belly), 16px 16px 0 0 var(--yoshi-belly), 20px 16px 0 0 var(--yoshi-green),
+    4px 20px 0 0 var(--yoshi-shoe), 8px 20px 0 0 var(--yoshi-green), 16px 20px 0 0 var(--yoshi-green), 20px 20px 0 0 var(--yoshi-shoe);
+}
+
+/* =====================================================
+   MERMARINTCHI — Mermaid (blue/pink)
+   ===================================================== */
+
+/* EGG */
+.pet--egg.char--mermarintchi::before {
+  box-shadow:
+    8px 0px 0 0 var(--merma-skin),  16px 0px 0 0 var(--merma-skin),  24px 0px 0 0 var(--merma-skin),
+    4px 4px 0 0 var(--merma-skin),  8px 4px 0 0 var(--merma-skin),   12px 4px 0 0 var(--merma-skin),  16px 4px 0 0 var(--merma-skin),  20px 4px 0 0 var(--merma-skin),  24px 4px 0 0 var(--merma-skin),  28px 4px 0 0 var(--merma-skin),
+    0px 8px 0 0 var(--merma-skin),  4px 8px 0 0 var(--merma-skin),   8px 8px 0 0 var(--merma-skin),  12px 8px 0 0 var(--merma-skin),  16px 8px 0 0 var(--merma-skin),  20px 8px 0 0 var(--merma-skin),  24px 8px 0 0 var(--merma-skin),  28px 8px 0 0 var(--merma-skin),  32px 8px 0 0 var(--merma-skin),
+    0px 12px 0 0 var(--merma-skin), 4px 12px 0 0 var(--merma-skin),  8px 12px 0 0 var(--merma-skin), 12px 12px 0 0 var(--merma-skin), 16px 12px 0 0 var(--merma-skin), 20px 12px 0 0 var(--merma-skin), 24px 12px 0 0 var(--merma-skin), 28px 12px 0 0 var(--merma-skin), 32px 12px 0 0 var(--merma-skin),
+    0px 16px 0 0 var(--merma-skin), 4px 16px 0 0 var(--merma-skin),  8px 16px 0 0 var(--merma-skin), 12px 16px 0 0 var(--merma-skin), 16px 16px 0 0 var(--merma-skin), 20px 16px 0 0 var(--merma-skin), 24px 16px 0 0 var(--merma-skin), 28px 16px 0 0 var(--merma-skin), 32px 16px 0 0 var(--merma-skin),
+    0px 20px 0 0 var(--merma-skin), 4px 20px 0 0 var(--merma-skin),  8px 20px 0 0 var(--merma-skin), 12px 20px 0 0 var(--merma-skin), 16px 20px 0 0 var(--merma-skin), 20px 20px 0 0 var(--merma-skin), 24px 20px 0 0 var(--merma-skin), 28px 20px 0 0 var(--merma-skin), 32px 20px 0 0 var(--merma-skin),
+    0px 24px 0 0 var(--merma-skin), 4px 24px 0 0 var(--merma-skin),  8px 24px 0 0 var(--merma-skin), 12px 24px 0 0 var(--merma-skin), 16px 24px 0 0 var(--merma-skin), 20px 24px 0 0 var(--merma-skin), 24px 24px 0 0 var(--merma-skin), 28px 24px 0 0 var(--merma-skin), 32px 24px 0 0 var(--merma-skin),
+    4px 28px 0 0 var(--merma-skin),  8px 28px 0 0 var(--merma-skin), 12px 28px 0 0 var(--merma-skin), 16px 28px 0 0 var(--merma-skin), 20px 28px 0 0 var(--merma-skin), 24px 28px 0 0 var(--merma-skin), 28px 28px 0 0 var(--merma-skin),
+    8px 32px 0 0 var(--merma-skin),  12px 32px 0 0 var(--merma-skin), 16px 32px 0 0 var(--merma-skin), 20px 32px 0 0 var(--merma-skin), 24px 32px 0 0 var(--merma-skin),
+    /* wave/drop spots in blue */
+    16px 4px 0 0 var(--merma-blue),
+    8px 12px 0 0 var(--merma-blue),  24px 12px 0 0 var(--merma-blue),
+    16px 20px 0 0 var(--merma-blue),
+    8px 28px 0 0 var(--merma-blue),  24px 28px 0 0 var(--merma-blue);
+}
+
+/* BABY */
+.pet--baby.char--mermarintchi::before {
+  box-shadow:
+    /* head */
+    8px 4px 0 0 var(--merma-skin),  12px 4px 0 0 var(--merma-skin),  16px 4px 0 0 var(--merma-skin),  20px 4px 0 0 var(--merma-skin),
+    /* fin ears */
+    4px 4px 0 0 var(--merma-blue),  24px 4px 0 0 var(--merma-blue),
+    4px 8px 0 0 var(--merma-blue),  8px 8px 0 0 var(--merma-skin),  12px 8px 0 0 var(--merma-skin),  16px 8px 0 0 var(--merma-skin),  20px 8px 0 0 var(--merma-skin),  24px 8px 0 0 var(--merma-blue),
+    /* eyes + cheeks */
+    4px 12px 0 0 var(--merma-skin),  8px 12px 0 0 var(--yoshi-pupil),  12px 12px 0 0 var(--merma-skin),  16px 12px 0 0 var(--merma-skin),  20px 12px 0 0 var(--yoshi-pupil),  24px 12px 0 0 var(--merma-skin),
+    4px 16px 0 0 var(--merma-pink),  8px 16px 0 0 var(--merma-skin),  12px 16px 0 0 var(--merma-lips),  16px 16px 0 0 var(--merma-skin),  20px 16px 0 0 var(--merma-skin),  24px 16px 0 0 var(--merma-pink),
+    /* small tail */
+    8px 20px 0 0 var(--merma-skin),  12px 20px 0 0 var(--merma-skin),  16px 20px 0 0 var(--merma-skin),  20px 20px 0 0 var(--merma-skin),
+    12px 24px 0 0 var(--merma-pink),  16px 24px 0 0 var(--merma-pink),
+    8px 28px 0 0 var(--merma-blue),  12px 28px 0 0 var(--merma-yellow),  16px 28px 0 0 var(--merma-yellow),  20px 28px 0 0 var(--merma-blue);
+}
+
+/* CHILD */
+.pet--child.char--mermarintchi::before {
+  box-shadow:
+    /* fin ears */
+    0px 0px 0 0 var(--merma-blue),  4px 0px 0 0 var(--merma-blue),  28px 0px 0 0 var(--merma-blue),  32px 0px 0 0 var(--merma-blue),
+    /* blue forehead */
+    12px 0px 0 0 var(--merma-blue),  16px 0px 0 0 var(--merma-blue),
+    /* head */
+    4px 4px 0 0 var(--merma-blue),  8px 4px 0 0 var(--merma-skin),  12px 4px 0 0 var(--merma-skin),  16px 4px 0 0 var(--merma-skin),  20px 4px 0 0 var(--merma-skin),  24px 4px 0 0 var(--merma-skin),  28px 4px 0 0 var(--merma-blue),
+    4px 8px 0 0 var(--merma-blue),  8px 8px 0 0 var(--merma-skin),  12px 8px 0 0 var(--yoshi-pupil),  16px 8px 0 0 var(--merma-skin),  20px 8px 0 0 var(--yoshi-pupil),  24px 8px 0 0 var(--merma-skin),  28px 8px 0 0 var(--merma-blue),
+    /* cheeks + lips */
+    4px 12px 0 0 var(--merma-pink),  8px 12px 0 0 var(--merma-skin),  12px 12px 0 0 var(--merma-skin),  16px 12px 0 0 var(--merma-lips),  20px 12px 0 0 var(--merma-skin),  24px 12px 0 0 var(--merma-skin),  28px 12px 0 0 var(--merma-pink),
+    /* body */
+    8px 16px 0 0 var(--merma-skin),  12px 16px 0 0 var(--merma-skin),  16px 16px 0 0 var(--merma-skin),  20px 16px 0 0 var(--merma-skin),
+    8px 20px 0 0 var(--merma-skin),  12px 20px 0 0 var(--merma-skin),  16px 20px 0 0 var(--merma-skin),  20px 20px 0 0 var(--merma-skin),
+    /* tail */
+    8px 24px 0 0 var(--merma-pink),  12px 24px 0 0 var(--merma-pink),  16px 24px 0 0 var(--merma-pink),  20px 24px 0 0 var(--merma-pink),
+    4px 28px 0 0 var(--merma-yellow),  8px 28px 0 0 var(--merma-pink),  12px 28px 0 0 var(--merma-yellow),  16px 28px 0 0 var(--merma-yellow),  20px 28px 0 0 var(--merma-pink),  24px 28px 0 0 var(--merma-yellow),
+    4px 32px 0 0 var(--merma-blue),  8px 32px 0 0 var(--merma-blue),  20px 32px 0 0 var(--merma-blue),  24px 32px 0 0 var(--merma-blue);
+}
+
+/* TEEN */
+.pet--teen.char--mermarintchi::before {
+  box-shadow:
+    0px 0px 0 0 var(--merma-blue),  4px 0px 0 0 var(--merma-blue),  12px 0px 0 0 var(--merma-blue),  16px 0px 0 0 var(--merma-blue),  28px 0px 0 0 var(--merma-blue),  32px 0px 0 0 var(--merma-blue),
+    0px 4px 0 0 var(--merma-blue),  4px 4px 0 0 var(--merma-blue),  8px 4px 0 0 var(--merma-skin),  12px 4px 0 0 var(--merma-skin),  16px 4px 0 0 var(--merma-skin),  20px 4px 0 0 var(--merma-skin),  24px 4px 0 0 var(--merma-skin),  28px 4px 0 0 var(--merma-blue),  32px 4px 0 0 var(--merma-blue),
+    4px 8px 0 0 var(--merma-blue),  8px 8px 0 0 var(--merma-skin),  12px 8px 0 0 var(--yoshi-eye-white),  16px 8px 0 0 var(--yoshi-pupil),  20px 8px 0 0 var(--merma-skin),  24px 8px 0 0 var(--yoshi-pupil),  28px 8px 0 0 var(--merma-blue),
+    4px 12px 0 0 var(--merma-pink),  8px 12px 0 0 var(--merma-skin),  12px 12px 0 0 var(--merma-skin),  16px 12px 0 0 var(--merma-lips),  20px 12px 0 0 var(--merma-skin),  24px 12px 0 0 var(--merma-skin),  28px 12px 0 0 var(--merma-pink),
+    8px 16px 0 0 var(--merma-skin),  12px 16px 0 0 var(--merma-skin),  16px 16px 0 0 var(--merma-skin),  20px 16px 0 0 var(--merma-skin),
+    8px 20px 0 0 var(--merma-skin),  12px 20px 0 0 var(--merma-skin),  16px 20px 0 0 var(--merma-skin),  20px 20px 0 0 var(--merma-skin),
+    4px 24px 0 0 var(--merma-pink),  8px 24px 0 0 var(--merma-pink),  12px 24px 0 0 var(--merma-pink),  16px 24px 0 0 var(--merma-pink),  20px 24px 0 0 var(--merma-pink),  24px 24px 0 0 var(--merma-pink),
+    0px 28px 0 0 var(--merma-yellow),  4px 28px 0 0 var(--merma-yellow),  8px 28px 0 0 var(--merma-pink),  12px 28px 0 0 var(--merma-yellow),  16px 28px 0 0 var(--merma-yellow),  20px 28px 0 0 var(--merma-pink),  24px 28px 0 0 var(--merma-yellow),  28px 28px 0 0 var(--merma-yellow),
+    0px 32px 0 0 var(--merma-blue),  4px 32px 0 0 var(--merma-blue),  8px 32px 0 0 var(--merma-blue),  20px 32px 0 0 var(--merma-blue),  24px 32px 0 0 var(--merma-blue),  28px 32px 0 0 var(--merma-blue);
+}
+
+/* ADULT GOOD */
+.pet--adult-good.char--mermarintchi::before {
+  box-shadow:
+    0px 0px 0 0 var(--merma-blue),  4px 0px 0 0 var(--merma-blue),  12px 0px 0 0 var(--merma-blue),  16px 0px 0 0 var(--merma-blue),  28px 0px 0 0 var(--merma-blue),  32px 0px 0 0 var(--merma-blue),
+    0px 4px 0 0 var(--merma-blue),  4px 4px 0 0 var(--merma-blue),  8px 4px 0 0 var(--merma-skin),  12px 4px 0 0 var(--merma-skin),  16px 4px 0 0 var(--merma-skin),  20px 4px 0 0 var(--merma-skin),  24px 4px 0 0 var(--merma-skin),  28px 4px 0 0 var(--merma-blue),  32px 4px 0 0 var(--merma-blue),
+    0px 8px 0 0 var(--merma-blue),  4px 8px 0 0 var(--merma-skin),  8px 8px 0 0 var(--yoshi-eye-white),  12px 8px 0 0 var(--yoshi-eye-white),  16px 8px 0 0 var(--merma-skin),  20px 8px 0 0 var(--yoshi-eye-white),  24px 8px 0 0 var(--yoshi-eye-white),  28px 8px 0 0 var(--merma-skin),  32px 8px 0 0 var(--merma-blue),
+    0px 12px 0 0 var(--merma-blue),  4px 12px 0 0 var(--merma-skin),  8px 12px 0 0 var(--yoshi-pupil),  12px 12px 0 0 var(--yoshi-eye-white),  16px 12px 0 0 var(--merma-skin),  20px 12px 0 0 var(--yoshi-pupil),  24px 12px 0 0 var(--yoshi-eye-white),  28px 12px 0 0 var(--merma-skin),  32px 12px 0 0 var(--merma-blue),
+    4px 16px 0 0 var(--merma-pink),  8px 16px 0 0 var(--merma-skin),  12px 16px 0 0 var(--merma-skin),  16px 16px 0 0 var(--merma-lips),  20px 16px 0 0 var(--merma-skin),  24px 16px 0 0 var(--merma-skin),  28px 16px 0 0 var(--merma-pink),
+    4px 20px 0 0 var(--merma-skin),  8px 20px 0 0 var(--merma-skin),  12px 20px 0 0 var(--merma-skin),  16px 20px 0 0 var(--merma-skin),  20px 20px 0 0 var(--merma-skin),  24px 20px 0 0 var(--merma-skin),
+    4px 24px 0 0 var(--merma-skin),  8px 24px 0 0 var(--merma-skin),  12px 24px 0 0 var(--merma-skin),  16px 24px 0 0 var(--merma-skin),  20px 24px 0 0 var(--merma-skin),  24px 24px 0 0 var(--merma-skin),
+    0px 28px 0 0 var(--merma-pink),  4px 28px 0 0 var(--merma-pink),  8px 28px 0 0 var(--merma-pink),  12px 28px 0 0 var(--merma-pink),  16px 28px 0 0 var(--merma-pink),  20px 28px 0 0 var(--merma-pink),  24px 28px 0 0 var(--merma-pink),  28px 28px 0 0 var(--merma-pink),
+    0px 32px 0 0 var(--merma-yellow),  4px 32px 0 0 var(--merma-yellow),  8px 32px 0 0 var(--merma-pink),  12px 32px 0 0 var(--merma-yellow),  16px 32px 0 0 var(--merma-yellow),  20px 32px 0 0 var(--merma-pink),  24px 32px 0 0 var(--merma-yellow),  28px 32px 0 0 var(--merma-yellow),
+    0px 36px 0 0 var(--merma-blue),  4px 36px 0 0 var(--merma-blue),  8px 36px 0 0 var(--merma-blue),  20px 36px 0 0 var(--merma-blue),  24px 36px 0 0 var(--merma-blue),  28px 36px 0 0 var(--merma-blue);
+}
+
+/* ADULT AVG */
+.pet--adult-avg.char--mermarintchi::before {
+  box-shadow:
+    0px 0px 0 0 var(--merma-blue),  4px 0px 0 0 var(--merma-blue),  12px 0px 0 0 var(--merma-blue),  16px 0px 0 0 var(--merma-blue),  28px 0px 0 0 var(--merma-blue),  32px 0px 0 0 var(--merma-blue),
+    0px 4px 0 0 var(--merma-blue),  4px 4px 0 0 var(--merma-blue),  8px 4px 0 0 var(--merma-skin),  12px 4px 0 0 var(--merma-skin),  16px 4px 0 0 var(--merma-skin),  20px 4px 0 0 var(--merma-skin),  24px 4px 0 0 var(--merma-skin),  28px 4px 0 0 var(--merma-blue),  32px 4px 0 0 var(--merma-blue),
+    4px 8px 0 0 var(--merma-skin),  8px 8px 0 0 var(--yoshi-eye-white),  12px 8px 0 0 var(--yoshi-pupil),  16px 8px 0 0 var(--merma-skin),  20px 8px 0 0 var(--yoshi-pupil),  24px 8px 0 0 var(--merma-skin),
+    4px 12px 0 0 var(--merma-skin),  8px 12px 0 0 var(--merma-skin),  12px 12px 0 0 var(--merma-skin),  16px 12px 0 0 var(--merma-dark),  20px 12px 0 0 var(--merma-dark),  24px 12px 0 0 var(--merma-dark),
+    4px 16px 0 0 var(--merma-skin),  8px 16px 0 0 var(--merma-skin),  12px 16px 0 0 var(--merma-skin),  16px 16px 0 0 var(--merma-skin),  20px 16px 0 0 var(--merma-skin),  24px 16px 0 0 var(--merma-skin),
+    4px 20px 0 0 var(--merma-skin),  8px 20px 0 0 var(--merma-skin),  12px 20px 0 0 var(--merma-skin),  16px 20px 0 0 var(--merma-skin),  20px 20px 0 0 var(--merma-skin),  24px 20px 0 0 var(--merma-skin),
+    0px 24px 0 0 var(--merma-pink),  4px 24px 0 0 var(--merma-pink),  8px 24px 0 0 var(--merma-pink),  12px 24px 0 0 var(--merma-pink),  16px 24px 0 0 var(--merma-pink),  20px 24px 0 0 var(--merma-pink),  24px 24px 0 0 var(--merma-pink),  28px 24px 0 0 var(--merma-pink),
+    0px 28px 0 0 var(--merma-yellow),  4px 28px 0 0 var(--merma-pink),  8px 28px 0 0 var(--merma-yellow),  12px 28px 0 0 var(--merma-yellow),  16px 28px 0 0 var(--merma-pink),  20px 28px 0 0 var(--merma-yellow),  24px 28px 0 0 var(--merma-yellow),  28px 28px 0 0 var(--merma-yellow),
+    0px 32px 0 0 var(--merma-blue),  4px 32px 0 0 var(--merma-blue),  20px 32px 0 0 var(--merma-blue),  24px 32px 0 0 var(--merma-blue),  28px 32px 0 0 var(--merma-blue);
+}
+
+/* ADULT BAD */
+.pet--adult-bad.char--mermarintchi::before {
+  box-shadow:
+    0px 0px 0 0 var(--merma-blue),  4px 0px 0 0 var(--merma-blue),  28px 0px 0 0 var(--merma-blue),  32px 0px 0 0 var(--merma-blue),
+    4px 4px 0 0 var(--merma-blue),  8px 4px 0 0 var(--merma-skin),  12px 4px 0 0 var(--merma-skin),  16px 4px 0 0 var(--merma-skin),  20px 4px 0 0 var(--merma-skin),  24px 4px 0 0 var(--merma-skin),  28px 4px 0 0 var(--merma-blue),
+    4px 8px 0 0 var(--merma-skin),  8px 8px 0 0 var(--yoshi-eye-white),  12px 8px 0 0 var(--merma-skin),  16px 8px 0 0 var(--yoshi-pupil),  20px 8px 0 0 var(--merma-skin),  24px 8px 0 0 var(--merma-skin),
+    4px 12px 0 0 var(--merma-skin),  8px 12px 0 0 var(--merma-skin),  12px 12px 0 0 var(--merma-dark),  16px 12px 0 0 var(--merma-skin),  20px 12px 0 0 var(--merma-dark),  24px 12px 0 0 var(--merma-skin),
+    4px 16px 0 0 var(--merma-skin),  8px 16px 0 0 var(--merma-skin),  12px 16px 0 0 var(--merma-skin),  16px 16px 0 0 var(--merma-skin),  20px 16px 0 0 var(--merma-skin),  24px 16px 0 0 var(--merma-skin),
+    4px 20px 0 0 var(--merma-skin),  8px 20px 0 0 var(--merma-skin),  12px 20px 0 0 var(--merma-skin),  16px 20px 0 0 var(--merma-skin),  20px 20px 0 0 var(--merma-skin),  24px 20px 0 0 var(--merma-skin),
+    8px 24px 0 0 var(--merma-pink),  12px 24px 0 0 var(--merma-pink),  16px 24px 0 0 var(--merma-pink),  20px 24px 0 0 var(--merma-pink),
+    4px 28px 0 0 var(--merma-yellow),  8px 28px 0 0 var(--merma-pink),  12px 28px 0 0 var(--merma-pink),  16px 28px 0 0 var(--merma-yellow),  20px 28px 0 0 var(--merma-pink),  24px 28px 0 0 var(--merma-yellow),
+    4px 32px 0 0 var(--merma-blue),  8px 32px 0 0 var(--merma-blue),  20px 32px 0 0 var(--merma-blue),  24px 32px 0 0 var(--merma-blue);
+}
+
+/* DEAD */
+.pet--dead.char--mermarintchi::before,
+.death-pet.char--mermarintchi::before {
+  box-shadow:
+    0px 0px 0 0 var(--merma-blue),  4px 0px 0 0 var(--merma-blue),  12px 0px 0 0 var(--merma-blue),  16px 0px 0 0 var(--merma-blue),  28px 0px 0 0 var(--merma-blue),  32px 0px 0 0 var(--merma-blue),
+    0px 4px 0 0 var(--merma-blue),  4px 4px 0 0 var(--merma-blue),  8px 4px 0 0 var(--merma-skin),  12px 4px 0 0 var(--merma-skin),  16px 4px 0 0 var(--merma-skin),  20px 4px 0 0 var(--merma-skin),  24px 4px 0 0 var(--merma-skin),  28px 4px 0 0 var(--merma-blue),  32px 4px 0 0 var(--merma-blue),
+    /* X eyes */
+    4px 8px 0 0 var(--yoshi-pupil),  12px 8px 0 0 var(--yoshi-pupil),  16px 8px 0 0 var(--yoshi-pupil),  24px 8px 0 0 var(--yoshi-pupil),
+    8px 12px 0 0 var(--yoshi-pupil),  20px 12px 0 0 var(--yoshi-pupil),
+    4px 16px 0 0 var(--yoshi-pupil),  12px 16px 0 0 var(--yoshi-pupil),  16px 16px 0 0 var(--yoshi-pupil),  24px 16px 0 0 var(--yoshi-pupil),
+    4px 20px 0 0 var(--merma-skin),  8px 20px 0 0 var(--merma-skin),  12px 20px 0 0 var(--merma-skin),  16px 20px 0 0 var(--merma-skin),  20px 20px 0 0 var(--merma-skin),  24px 20px 0 0 var(--merma-skin),
+    0px 24px 0 0 var(--merma-pink),  4px 24px 0 0 var(--merma-pink),  8px 24px 0 0 var(--merma-pink),  12px 24px 0 0 var(--merma-pink),  16px 24px 0 0 var(--merma-pink),  20px 24px 0 0 var(--merma-pink),  24px 24px 0 0 var(--merma-pink),  28px 24px 0 0 var(--merma-pink),
+    0px 28px 0 0 var(--merma-yellow),  4px 28px 0 0 var(--merma-pink),  8px 28px 0 0 var(--merma-yellow),  16px 28px 0 0 var(--merma-yellow),  20px 28px 0 0 var(--merma-pink),  24px 28px 0 0 var(--merma-yellow),  28px 28px 0 0 var(--merma-blue),
+    0px 32px 0 0 var(--merma-blue),  4px 32px 0 0 var(--merma-blue),  28px 32px 0 0 var(--merma-blue);
+}
+
+/* Setup screen preview */
+.char-preview--mermarintchi::before {
+  box-shadow:
+    0px 4px 0 0 var(--merma-blue),  8px 4px 0 0 var(--merma-skin),  12px 4px 0 0 var(--merma-skin),  16px 4px 0 0 var(--merma-skin),  20px 4px 0 0 var(--merma-skin),  24px 4px 0 0 var(--merma-blue),
+    4px 8px 0 0 var(--merma-skin),  8px 8px 0 0 var(--yoshi-pupil),  16px 8px 0 0 var(--yoshi-pupil),  20px 8px 0 0 var(--merma-skin),
+    4px 12px 0 0 var(--merma-pink),  8px 12px 0 0 var(--merma-skin),  12px 12px 0 0 var(--merma-lips),  16px 12px 0 0 var(--merma-skin),  20px 12px 0 0 var(--merma-pink),
+    4px 16px 0 0 var(--merma-skin),  8px 16px 0 0 var(--merma-skin),  12px 16px 0 0 var(--merma-skin),  16px 16px 0 0 var(--merma-skin),
+    4px 20px 0 0 var(--merma-pink),  8px 20px 0 0 var(--merma-yellow),  12px 20px 0 0 var(--merma-yellow),  16px 20px 0 0 var(--merma-pink),
+    0px 24px 0 0 var(--merma-blue),  4px 24px 0 0 var(--merma-blue),  16px 24px 0 0 var(--merma-blue),  20px 24px 0 0 var(--merma-blue);
+}
+
+/* =====================================================
+   HORHOTCHI — Owl (lavender with white disc)
+   ===================================================== */
+
+/* EGG */
+.pet--egg.char--horhotchi::before {
+  box-shadow:
+    8px 0px 0 0 var(--horho-chest),  16px 0px 0 0 var(--horho-chest),  24px 0px 0 0 var(--horho-chest),
+    4px 4px 0 0 var(--horho-chest),  8px 4px 0 0 var(--horho-chest),   12px 4px 0 0 var(--horho-chest),  16px 4px 0 0 var(--horho-chest),  20px 4px 0 0 var(--horho-chest),  24px 4px 0 0 var(--horho-chest),  28px 4px 0 0 var(--horho-chest),
+    0px 8px 0 0 var(--horho-chest),  4px 8px 0 0 var(--horho-chest),   8px 8px 0 0 var(--horho-chest),  12px 8px 0 0 var(--horho-chest),  16px 8px 0 0 var(--horho-chest),  20px 8px 0 0 var(--horho-chest),  24px 8px 0 0 var(--horho-chest),  28px 8px 0 0 var(--horho-chest),  32px 8px 0 0 var(--horho-chest),
+    0px 12px 0 0 var(--horho-chest), 4px 12px 0 0 var(--horho-chest),  8px 12px 0 0 var(--horho-chest), 12px 12px 0 0 var(--horho-chest), 16px 12px 0 0 var(--horho-chest), 20px 12px 0 0 var(--horho-chest), 24px 12px 0 0 var(--horho-chest), 28px 12px 0 0 var(--horho-chest), 32px 12px 0 0 var(--horho-chest),
+    0px 16px 0 0 var(--horho-chest), 4px 16px 0 0 var(--horho-chest),  8px 16px 0 0 var(--horho-chest), 12px 16px 0 0 var(--horho-chest), 16px 16px 0 0 var(--horho-chest), 20px 16px 0 0 var(--horho-chest), 24px 16px 0 0 var(--horho-chest), 28px 16px 0 0 var(--horho-chest), 32px 16px 0 0 var(--horho-chest),
+    0px 20px 0 0 var(--horho-chest), 4px 20px 0 0 var(--horho-chest),  8px 20px 0 0 var(--horho-chest), 12px 20px 0 0 var(--horho-chest), 16px 20px 0 0 var(--horho-chest), 20px 20px 0 0 var(--horho-chest), 24px 20px 0 0 var(--horho-chest), 28px 20px 0 0 var(--horho-chest), 32px 20px 0 0 var(--horho-chest),
+    0px 24px 0 0 var(--horho-chest), 4px 24px 0 0 var(--horho-chest),  8px 24px 0 0 var(--horho-chest), 12px 24px 0 0 var(--horho-chest), 16px 24px 0 0 var(--horho-chest), 20px 24px 0 0 var(--horho-chest), 24px 24px 0 0 var(--horho-chest), 28px 24px 0 0 var(--horho-chest), 32px 24px 0 0 var(--horho-chest),
+    4px 28px 0 0 var(--horho-chest),  8px 28px 0 0 var(--horho-chest), 12px 28px 0 0 var(--horho-chest), 16px 28px 0 0 var(--horho-chest), 20px 28px 0 0 var(--horho-chest), 24px 28px 0 0 var(--horho-chest), 28px 28px 0 0 var(--horho-chest),
+    8px 32px 0 0 var(--horho-chest),  12px 32px 0 0 var(--horho-chest), 16px 32px 0 0 var(--horho-chest), 20px 32px 0 0 var(--horho-chest), 24px 32px 0 0 var(--horho-chest),
+    /* purple circular spots */
+    16px 4px 0 0 var(--horho-purple),
+    8px 12px 0 0 var(--horho-purple),  24px 12px 0 0 var(--horho-purple),
+    16px 20px 0 0 var(--horho-purple),
+    8px 28px 0 0 var(--horho-purple),  24px 28px 0 0 var(--horho-purple);
+}
+
+/* BABY */
+.pet--baby.char--horhotchi::before {
+  box-shadow:
+    8px 4px 0 0 var(--horho-purple),  12px 4px 0 0 var(--horho-purple),  16px 4px 0 0 var(--horho-purple),  20px 4px 0 0 var(--horho-purple),
+    4px 8px 0 0 var(--horho-purple),  8px 8px 0 0 var(--horho-purple),   12px 8px 0 0 var(--horho-purple),  16px 8px 0 0 var(--horho-purple),  20px 8px 0 0 var(--horho-purple),  24px 8px 0 0 var(--horho-purple),
+    /* white facial disc */
+    4px 12px 0 0 var(--horho-purple), 8px 12px 0 0 var(--horho-white),  12px 12px 0 0 var(--horho-white),  16px 12px 0 0 var(--horho-white),  20px 12px 0 0 var(--horho-white), 24px 12px 0 0 var(--horho-purple),
+    /* eyes + beak */
+    4px 16px 0 0 var(--horho-purple), 8px 16px 0 0 var(--yoshi-pupil), 12px 16px 0 0 var(--horho-white), 16px 16px 0 0 var(--horho-beak), 20px 16px 0 0 var(--yoshi-pupil), 24px 16px 0 0 var(--horho-purple),
+    8px 20px 0 0 var(--horho-purple), 12px 20px 0 0 var(--horho-purple), 16px 20px 0 0 var(--horho-purple), 20px 20px 0 0 var(--horho-purple),
+    /* body */
+    8px 24px 0 0 var(--horho-purple),  12px 24px 0 0 var(--horho-purple),  16px 24px 0 0 var(--horho-purple),  20px 24px 0 0 var(--horho-purple),
+    /* feet */
+    8px 28px 0 0 var(--horho-yellow),  12px 28px 0 0 var(--horho-purple),  20px 28px 0 0 var(--horho-purple),  24px 28px 0 0 var(--horho-yellow);
+}
+
+/* CHILD */
+.pet--child.char--horhotchi::before {
+  box-shadow:
+    /* ear tufts */
+    8px 0px 0 0 var(--horho-dark),   12px 0px 0 0 var(--horho-dark),   20px 0px 0 0 var(--horho-dark),   24px 0px 0 0 var(--horho-dark),
+    8px 4px 0 0 var(--horho-purple), 12px 4px 0 0 var(--horho-purple), 16px 4px 0 0 var(--horho-purple), 20px 4px 0 0 var(--horho-purple), 24px 4px 0 0 var(--horho-purple),
+    4px 8px 0 0 var(--horho-purple), 8px 8px 0 0 var(--horho-purple),  12px 8px 0 0 var(--horho-purple), 16px 8px 0 0 var(--horho-purple), 20px 8px 0 0 var(--horho-purple), 24px 8px 0 0 var(--horho-purple), 28px 8px 0 0 var(--horho-purple),
+    /* facial disc */
+    4px 12px 0 0 var(--horho-purple), 8px 12px 0 0 var(--horho-white), 12px 12px 0 0 var(--horho-white), 16px 12px 0 0 var(--horho-white), 20px 12px 0 0 var(--horho-white), 24px 12px 0 0 var(--horho-white), 28px 12px 0 0 var(--horho-purple),
+    /* eyes + beak */
+    4px 16px 0 0 var(--horho-purple), 8px 16px 0 0 var(--yoshi-pupil), 12px 16px 0 0 var(--horho-white), 16px 16px 0 0 var(--horho-beak), 20px 16px 0 0 var(--horho-white), 24px 16px 0 0 var(--yoshi-pupil), 28px 16px 0 0 var(--horho-purple),
+    12px 20px 0 0 var(--horho-beak),
+    /* chest tufts */
+    4px 20px 0 0 var(--horho-purple), 8px 20px 0 0 var(--horho-white), 12px 20px 0 0 var(--horho-purple), 16px 20px 0 0 var(--horho-white), 20px 20px 0 0 var(--horho-purple), 24px 20px 0 0 var(--horho-white), 28px 20px 0 0 var(--horho-purple),
+    /* body */
+    4px 24px 0 0 var(--horho-purple), 8px 24px 0 0 var(--horho-purple), 12px 24px 0 0 var(--horho-purple), 16px 24px 0 0 var(--horho-purple), 20px 24px 0 0 var(--horho-purple), 24px 24px 0 0 var(--horho-purple), 28px 24px 0 0 var(--horho-purple),
+    /* feet */
+    8px 28px 0 0 var(--horho-yellow), 12px 28px 0 0 var(--horho-yellow), 20px 28px 0 0 var(--horho-yellow), 24px 28px 0 0 var(--horho-yellow);
+}
+
+/* TEEN */
+.pet--teen.char--horhotchi::before {
+  box-shadow:
+    /* tall ear tufts */
+    8px 0px 0 0 var(--horho-dark),  12px 0px 0 0 var(--horho-dark),  20px 0px 0 0 var(--horho-dark),  24px 0px 0 0 var(--horho-dark),
+    8px 4px 0 0 var(--horho-dark),  20px 4px 0 0 var(--horho-dark),
+    /* head */
+    4px 8px 0 0 var(--horho-purple), 8px 8px 0 0 var(--horho-purple), 12px 8px 0 0 var(--horho-purple), 16px 8px 0 0 var(--horho-purple), 20px 8px 0 0 var(--horho-purple), 24px 8px 0 0 var(--horho-purple), 28px 8px 0 0 var(--horho-purple),
+    /* facial disc */
+    4px 12px 0 0 var(--horho-purple), 8px 12px 0 0 var(--horho-white), 12px 12px 0 0 var(--horho-white), 16px 12px 0 0 var(--horho-white), 20px 12px 0 0 var(--horho-white), 24px 12px 0 0 var(--horho-white), 28px 12px 0 0 var(--horho-purple),
+    /* eyes + beak */
+    4px 16px 0 0 var(--horho-purple), 8px 16px 0 0 var(--yoshi-pupil), 12px 16px 0 0 var(--horho-white), 16px 16px 0 0 var(--horho-beak), 20px 16px 0 0 var(--horho-white), 24px 16px 0 0 var(--yoshi-pupil), 28px 16px 0 0 var(--horho-purple),
+    12px 20px 0 0 var(--horho-beak), 16px 20px 0 0 var(--horho-beak),
+    /* wings */
+    0px 20px 0 0 var(--horho-purple), 4px 20px 0 0 var(--horho-purple), 8px 20px 0 0 var(--horho-purple), 12px 20px 0 0 var(--horho-purple), 16px 20px 0 0 var(--horho-purple), 20px 20px 0 0 var(--horho-purple), 24px 20px 0 0 var(--horho-purple), 28px 20px 0 0 var(--horho-purple), 32px 20px 0 0 var(--horho-purple),
+    /* chest tufts */
+    4px 24px 0 0 var(--horho-purple), 8px 24px 0 0 var(--horho-white), 12px 24px 0 0 var(--horho-purple), 16px 24px 0 0 var(--horho-white), 20px 24px 0 0 var(--horho-purple), 24px 24px 0 0 var(--horho-white), 28px 24px 0 0 var(--horho-purple),
+    /* body */
+    4px 28px 0 0 var(--horho-purple), 8px 28px 0 0 var(--horho-purple), 12px 28px 0 0 var(--horho-purple), 16px 28px 0 0 var(--horho-purple), 20px 28px 0 0 var(--horho-purple), 24px 28px 0 0 var(--horho-purple), 28px 28px 0 0 var(--horho-purple),
+    /* tail */
+    12px 32px 0 0 var(--horho-dark),  16px 32px 0 0 var(--horho-dark),
+    /* feet */
+    8px 36px 0 0 var(--horho-yellow), 12px 36px 0 0 var(--horho-yellow), 20px 36px 0 0 var(--horho-yellow), 24px 36px 0 0 var(--horho-yellow);
+}
+
+/* ADULT GOOD */
+.pet--adult-good.char--horhotchi::before {
+  box-shadow:
+    /* pointed ear tufts */
+    8px 0px 0 0 var(--horho-dark),  24px 0px 0 0 var(--horho-dark),
+    4px 4px 0 0 var(--horho-dark),  8px 4px 0 0 var(--horho-dark),  20px 4px 0 0 var(--horho-dark),  24px 4px 0 0 var(--horho-dark),
+    /* head */
+    4px 8px 0 0 var(--horho-purple), 8px 8px 0 0 var(--horho-purple), 12px 8px 0 0 var(--horho-purple), 16px 8px 0 0 var(--horho-purple), 20px 8px 0 0 var(--horho-purple), 24px 8px 0 0 var(--horho-purple), 28px 8px 0 0 var(--horho-purple),
+    /* large disc */
+    0px 12px 0 0 var(--horho-purple), 4px 12px 0 0 var(--horho-white), 8px 12px 0 0 var(--horho-white), 12px 12px 0 0 var(--horho-white), 16px 12px 0 0 var(--horho-white), 20px 12px 0 0 var(--horho-white), 24px 12px 0 0 var(--horho-white), 28px 12px 0 0 var(--horho-purple),
+    0px 16px 0 0 var(--horho-purple), 4px 16px 0 0 var(--horho-white), 8px 16px 0 0 var(--yoshi-eye-white), 12px 16px 0 0 var(--yoshi-eye-white), 16px 16px 0 0 var(--horho-beak), 20px 16px 0 0 var(--yoshi-eye-white), 24px 16px 0 0 var(--yoshi-eye-white), 28px 16px 0 0 var(--horho-white), 32px 16px 0 0 var(--horho-purple),
+    /* pupils */
+    4px 20px 0 0 var(--horho-purple), 8px 20px 0 0 var(--yoshi-pupil), 12px 20px 0 0 var(--yoshi-eye-white), 16px 20px 0 0 var(--horho-beak), 20px 20px 0 0 var(--yoshi-eye-white), 24px 20px 0 0 var(--yoshi-pupil), 28px 20px 0 0 var(--horho-purple),
+    /* wings + body */
+    0px 24px 0 0 var(--horho-purple), 4px 24px 0 0 var(--horho-purple), 8px 24px 0 0 var(--horho-purple), 12px 24px 0 0 var(--horho-purple), 16px 24px 0 0 var(--horho-purple), 20px 24px 0 0 var(--horho-purple), 24px 24px 0 0 var(--horho-purple), 28px 24px 0 0 var(--horho-purple), 32px 24px 0 0 var(--horho-purple),
+    /* chest tufts */
+    4px 28px 0 0 var(--horho-purple), 8px 28px 0 0 var(--horho-white), 12px 28px 0 0 var(--horho-purple), 16px 28px 0 0 var(--horho-white), 20px 28px 0 0 var(--horho-purple), 24px 28px 0 0 var(--horho-white), 28px 28px 0 0 var(--horho-purple),
+    /* body */
+    4px 32px 0 0 var(--horho-purple), 8px 32px 0 0 var(--horho-purple), 12px 32px 0 0 var(--horho-purple), 16px 32px 0 0 var(--horho-purple), 20px 32px 0 0 var(--horho-purple), 24px 32px 0 0 var(--horho-purple), 28px 32px 0 0 var(--horho-purple),
+    /* tail */
+    12px 36px 0 0 var(--horho-dark),  16px 36px 0 0 var(--horho-dark),  20px 36px 0 0 var(--horho-dark),
+    /* feet with toes */
+    4px 40px 0 0 var(--horho-yellow), 8px 40px 0 0 var(--horho-yellow), 12px 40px 0 0 var(--horho-yellow), 20px 40px 0 0 var(--horho-yellow), 24px 40px 0 0 var(--horho-yellow), 28px 40px 0 0 var(--horho-yellow);
+}
+
+/* ADULT AVG */
+.pet--adult-avg.char--horhotchi::before {
+  box-shadow:
+    8px 0px 0 0 var(--horho-dark),  24px 0px 0 0 var(--horho-dark),
+    4px 4px 0 0 var(--horho-dark),  8px 4px 0 0 var(--horho-dark),  20px 4px 0 0 var(--horho-dark),  24px 4px 0 0 var(--horho-dark),
+    4px 8px 0 0 var(--horho-purple), 8px 8px 0 0 var(--horho-purple), 12px 8px 0 0 var(--horho-purple), 16px 8px 0 0 var(--horho-purple), 20px 8px 0 0 var(--horho-purple), 24px 8px 0 0 var(--horho-purple), 28px 8px 0 0 var(--horho-purple),
+    0px 12px 0 0 var(--horho-purple), 4px 12px 0 0 var(--horho-white), 8px 12px 0 0 var(--horho-white), 12px 12px 0 0 var(--horho-white), 16px 12px 0 0 var(--horho-white), 20px 12px 0 0 var(--horho-white), 24px 12px 0 0 var(--horho-white), 28px 12px 0 0 var(--horho-purple),
+    4px 16px 0 0 var(--horho-white), 8px 16px 0 0 var(--yoshi-pupil), 12px 16px 0 0 var(--yoshi-pupil), 16px 16px 0 0 var(--horho-beak), 20px 16px 0 0 var(--yoshi-pupil), 24px 16px 0 0 var(--yoshi-pupil), 28px 16px 0 0 var(--horho-white),
+    /* neutral flat beak */
+    12px 20px 0 0 var(--horho-beak), 16px 20px 0 0 var(--horho-beak),
+    0px 24px 0 0 var(--horho-purple), 4px 24px 0 0 var(--horho-purple), 8px 24px 0 0 var(--horho-purple), 12px 24px 0 0 var(--horho-purple), 16px 24px 0 0 var(--horho-purple), 20px 24px 0 0 var(--horho-purple), 24px 24px 0 0 var(--horho-purple), 28px 24px 0 0 var(--horho-purple), 32px 24px 0 0 var(--horho-purple),
+    4px 28px 0 0 var(--horho-purple), 8px 28px 0 0 var(--horho-purple), 12px 28px 0 0 var(--horho-purple), 16px 28px 0 0 var(--horho-purple), 20px 28px 0 0 var(--horho-purple), 24px 28px 0 0 var(--horho-purple), 28px 28px 0 0 var(--horho-purple),
+    12px 32px 0 0 var(--horho-dark),  16px 32px 0 0 var(--horho-dark),
+    4px 36px 0 0 var(--horho-yellow), 8px 36px 0 0 var(--horho-yellow), 12px 36px 0 0 var(--horho-yellow), 20px 36px 0 0 var(--horho-yellow), 24px 36px 0 0 var(--horho-yellow), 28px 36px 0 0 var(--horho-yellow);
+}
+
+/* ADULT BAD */
+.pet--adult-bad.char--horhotchi::before {
+  box-shadow:
+    /* droopy ear tufts angled out */
+    4px 0px 0 0 var(--horho-dark),  8px 0px 0 0 var(--horho-dark),  24px 0px 0 0 var(--horho-dark),  28px 0px 0 0 var(--horho-dark),
+    4px 4px 0 0 var(--horho-dark),  28px 4px 0 0 var(--horho-dark),
+    4px 8px 0 0 var(--horho-purple), 8px 8px 0 0 var(--horho-purple), 12px 8px 0 0 var(--horho-purple), 16px 8px 0 0 var(--horho-purple), 20px 8px 0 0 var(--horho-purple), 24px 8px 0 0 var(--horho-purple), 28px 8px 0 0 var(--horho-purple),
+    0px 12px 0 0 var(--horho-purple), 4px 12px 0 0 var(--horho-white), 8px 12px 0 0 var(--horho-white), 12px 12px 0 0 var(--horho-white), 16px 12px 0 0 var(--horho-white), 20px 12px 0 0 var(--horho-white), 24px 12px 0 0 var(--horho-white), 28px 12px 0 0 var(--horho-purple),
+    /* sleepy half-closed eyes */
+    4px 16px 0 0 var(--horho-white), 8px 16px 0 0 var(--yoshi-pupil), 12px 16px 0 0 var(--horho-white), 16px 16px 0 0 var(--horho-white), 20px 16px 0 0 var(--horho-white), 24px 16px 0 0 var(--yoshi-pupil), 28px 16px 0 0 var(--horho-white),
+    /* yawning open beak */
+    8px 20px 0 0 var(--horho-beak), 12px 20px 0 0 var(--horho-beak), 16px 20px 0 0 var(--horho-beak), 20px 20px 0 0 var(--horho-beak),
+    8px 24px 0 0 var(--horho-beak),  20px 24px 0 0 var(--horho-beak),
+    /* drooping wings */
+    0px 24px 0 0 var(--horho-dark), 4px 24px 0 0 var(--horho-purple), 8px 24px 0 0 var(--horho-purple), 12px 24px 0 0 var(--horho-purple), 16px 24px 0 0 var(--horho-purple), 20px 24px 0 0 var(--horho-purple), 24px 24px 0 0 var(--horho-purple), 28px 24px 0 0 var(--horho-purple), 32px 24px 0 0 var(--horho-dark),
+    4px 28px 0 0 var(--horho-purple), 8px 28px 0 0 var(--horho-purple), 12px 28px 0 0 var(--horho-purple), 16px 28px 0 0 var(--horho-purple), 20px 28px 0 0 var(--horho-purple), 24px 28px 0 0 var(--horho-purple), 28px 28px 0 0 var(--horho-purple),
+    12px 32px 0 0 var(--horho-dark),  16px 32px 0 0 var(--horho-dark),
+    4px 36px 0 0 var(--horho-yellow), 8px 36px 0 0 var(--horho-yellow), 12px 36px 0 0 var(--horho-yellow), 20px 36px 0 0 var(--horho-yellow), 24px 36px 0 0 var(--horho-yellow), 28px 36px 0 0 var(--horho-yellow);
+}
+
+/* DEAD */
+.pet--dead.char--horhotchi::before,
+.death-pet.char--horhotchi::before {
+  box-shadow:
+    8px 0px 0 0 var(--horho-dark),  24px 0px 0 0 var(--horho-dark),
+    4px 4px 0 0 var(--horho-dark),  8px 4px 0 0 var(--horho-dark),  20px 4px 0 0 var(--horho-dark),  24px 4px 0 0 var(--horho-dark),
+    4px 8px 0 0 var(--horho-purple), 8px 8px 0 0 var(--horho-purple), 12px 8px 0 0 var(--horho-purple), 16px 8px 0 0 var(--horho-purple), 20px 8px 0 0 var(--horho-purple), 24px 8px 0 0 var(--horho-purple), 28px 8px 0 0 var(--horho-purple),
+    0px 12px 0 0 var(--horho-purple), 4px 12px 0 0 var(--horho-white), 8px 12px 0 0 var(--horho-white), 12px 12px 0 0 var(--horho-white), 16px 12px 0 0 var(--horho-white), 20px 12px 0 0 var(--horho-white), 24px 12px 0 0 var(--horho-white), 28px 12px 0 0 var(--horho-purple),
+    /* X eyes */
+    4px 16px 0 0 var(--yoshi-pupil),  12px 16px 0 0 var(--yoshi-pupil),  16px 16px 0 0 var(--horho-beak),  20px 16px 0 0 var(--yoshi-pupil),  28px 16px 0 0 var(--yoshi-pupil),
+    8px 20px 0 0 var(--yoshi-pupil),  24px 20px 0 0 var(--yoshi-pupil),
+    4px 24px 0 0 var(--yoshi-pupil),  12px 24px 0 0 var(--yoshi-pupil),  20px 24px 0 0 var(--yoshi-pupil),  28px 24px 0 0 var(--yoshi-pupil),
+    /* open beak */
+    12px 20px 0 0 var(--horho-beak),  16px 20px 0 0 var(--horho-beak),  20px 20px 0 0 var(--horho-beak),
+    0px 28px 0 0 var(--horho-purple), 4px 28px 0 0 var(--horho-purple), 8px 28px 0 0 var(--horho-purple), 12px 28px 0 0 var(--horho-purple), 16px 28px 0 0 var(--horho-purple), 20px 28px 0 0 var(--horho-purple), 24px 28px 0 0 var(--horho-purple), 28px 28px 0 0 var(--horho-purple), 32px 28px 0 0 var(--horho-purple),
+    4px 32px 0 0 var(--horho-purple), 8px 32px 0 0 var(--horho-purple), 12px 32px 0 0 var(--horho-purple), 16px 32px 0 0 var(--horho-purple), 20px 32px 0 0 var(--horho-purple), 24px 32px 0 0 var(--horho-purple), 28px 32px 0 0 var(--horho-purple),
+    12px 36px 0 0 var(--horho-dark),  16px 36px 0 0 var(--horho-dark),
+    4px 40px 0 0 var(--horho-yellow), 8px 40px 0 0 var(--horho-yellow), 12px 40px 0 0 var(--horho-yellow), 20px 40px 0 0 var(--horho-yellow), 24px 40px 0 0 var(--horho-yellow), 28px 40px 0 0 var(--horho-yellow);
+}
+
+/* Setup screen preview */
+.char-preview--horhotchi::before {
+  box-shadow:
+    8px 0px 0 0 var(--horho-dark),  20px 0px 0 0 var(--horho-dark),
+    4px 4px 0 0 var(--horho-purple),  8px 4px 0 0 var(--horho-purple),  12px 4px 0 0 var(--horho-purple),  16px 4px 0 0 var(--horho-purple),  20px 4px 0 0 var(--horho-purple),
+    4px 8px 0 0 var(--horho-white),  8px 8px 0 0 var(--yoshi-pupil),  12px 8px 0 0 var(--horho-beak),  16px 8px 0 0 var(--yoshi-pupil),  20px 8px 0 0 var(--horho-white),
+    4px 12px 0 0 var(--horho-white),  8px 12px 0 0 var(--horho-white),  12px 12px 0 0 var(--horho-beak),  16px 12px 0 0 var(--horho-white),  20px 12px 0 0 var(--horho-white),
+    0px 16px 0 0 var(--horho-purple),  4px 16px 0 0 var(--horho-purple),  8px 16px 0 0 var(--horho-white),  12px 16px 0 0 var(--horho-purple),  16px 16px 0 0 var(--horho-white),  20px 16px 0 0 var(--horho-purple),  24px 16px 0 0 var(--horho-purple),
+    4px 20px 0 0 var(--horho-yellow),  8px 20px 0 0 var(--horho-purple),  16px 20px 0 0 var(--horho-purple),  20px 20px 0 0 var(--horho-yellow);
 }

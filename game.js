@@ -32,6 +32,29 @@ const CONFIG = {
 };
 
 /* =====================================================
+   CHARACTER CONFIGS
+   ===================================================== */
+
+const CHARACTER_CONFIGS = {
+  yoshi:        {},
+  mendakotchi:  { HAPPY_DECAY_TICKS: 18 },
+  mermarintchi: { SICK_DEATH_CHANCE: 0.30, WEIGHT_SICK_THRESHOLD: 12 },
+  horhotchi:    { HUNGER_DECAY_TICKS: 6, SICK_DEATH_CHANCE: 0.10 },
+};
+
+const CHARACTER_META = {
+  yoshi:        { displayName: 'Yoshi',        type: 'Dinosaur',         trait: 'Balanced stats',      description: 'A well-rounded green dinosaur. No advantages or disadvantages.' },
+  mendakotchi:  { displayName: 'Mendakotchi',  type: 'Flapjack Octopus', trait: 'Slow happiness decay', description: 'An easy-going octopus. Stays happy longer but eats at a normal rate.' },
+  mermarintchi: { displayName: 'Mermarintchi', type: 'Mermaid',          trait: 'Delicate health',      description: 'A loving mermaid. More prone to sickness and needs extra care.' },
+  horhotchi:    { displayName: 'Horhotchi',    type: 'Owl',              trait: 'Always hungry',        description: 'A sharp-sensed owl. Gets hungry fast but rarely gets sick.' },
+};
+
+function getCharConfig(key) {
+  const overrides = CHARACTER_CONFIGS[state.character] || {};
+  return (key in overrides) ? overrides[key] : CONFIG[key];
+}
+
+/* =====================================================
    STATE
    ===================================================== */
 
@@ -60,9 +83,12 @@ let state = {
   happyTicksSinceLoss: 0,
   isMisbehaving: false,
   pendingLightMistake: null,
+  name: '',
+  character: 'yoshi',
 };
 
 let gameLoopId = null;
+let selectedCharacter = null;
 
 /* =====================================================
    SOUND SYSTEM
@@ -277,18 +303,68 @@ function renderSoundBtn() {
 
 function save() {
   const toSave = Object.assign({}, state, { lastTickAt: Date.now() });
-  localStorage.setItem('tamagotchi_save', JSON.stringify(toSave));
+  localStorage.setItem('tamagotchi_save_' + (state.character || 'yoshi'), JSON.stringify(toSave));
+  localStorage.setItem('tamagotchi_current_character', state.character || 'yoshi');
 }
 
 function load() {
   try {
-    const raw = localStorage.getItem('tamagotchi_save');
-    if (!raw) return null;
-    return JSON.parse(raw);
+    const currentChar = localStorage.getItem('tamagotchi_current_character');
+    if (currentChar) {
+      const raw = localStorage.getItem('tamagotchi_save_' + currentChar);
+      if (raw) return JSON.parse(raw);
+    }
+    // Legacy migration: move old single-slot save to new per-character key
+    const legacy = localStorage.getItem('tamagotchi_save');
+    if (legacy) {
+      const parsed = JSON.parse(legacy);
+      parsed.character = parsed.character || 'yoshi';
+      parsed.name = parsed.name || '';
+      localStorage.setItem('tamagotchi_save_yoshi', JSON.stringify(parsed));
+      localStorage.setItem('tamagotchi_current_character', 'yoshi');
+      localStorage.removeItem('tamagotchi_save');
+      return parsed;
+    }
+    return null;
   } catch (e) {
     console.warn('Failed to load save:', e);
     return null;
   }
+}
+
+function loadCharacterSave(character) {
+  try {
+    const raw = localStorage.getItem('tamagotchi_save_' + character);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+
+function saveHistoryEntry(cause, preDeathStage) {
+  const entry = {
+    name: state.name,
+    character: state.character,
+    bornAt: state.bornAt,
+    diedAt: Date.now(),
+    cause,
+    careMistakes: state.careMistakes,
+    finalStage: preDeathStage,
+  };
+  const key = 'tamagotchi_history_' + state.character;
+  let hist = [];
+  try {
+    const r = localStorage.getItem(key);
+    if (r) hist = JSON.parse(r);
+  } catch (e) { /* ignore */ }
+  hist.push(entry);
+  if (hist.length > 50) hist = hist.slice(-50);
+  localStorage.setItem(key, JSON.stringify(hist));
+}
+
+function loadHistory(character) {
+  try {
+    const raw = localStorage.getItem('tamagotchi_history_' + (character || state.character));
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
 }
 
 /* =====================================================
@@ -299,25 +375,40 @@ function initGame() {
   initSound();
   const saved = load();
   if (saved) {
-    // Restore state
+    // Restore state with migration defaults
     Object.assign(state, saved);
+    if (!state.character) state.character = 'yoshi';
+    if (state.name === undefined) state.name = '';
     const missedMs = Date.now() - (saved.lastTickAt || Date.now());
     if (missedMs > 0 && state.stage !== 'dead') {
       applyCatchUpTicks(missedMs);
     }
+    render();
+    if (state.stage === 'dead') {
+      // Restore char class on death-pet
+      const deathPetEl = document.querySelector('.death-pet');
+      if (deathPetEl) {
+        Object.keys(CHARACTER_META).forEach(k => deathPetEl.classList.remove('char--' + k));
+        if (state.character) deathPetEl.classList.add('char--' + state.character);
+      }
+      openOverlay('death-screen');
+    }
   } else {
-    startNewGame();
-  }
-  render();
-  // Re-show death screen if pet was dead when page was closed
-  if (state.stage === 'dead') {
-    openOverlay('death-screen');
+    // No save — show setup screen (or start directly in test env)
+    if (!IS_TEST) {
+      render();
+      openSetupScreen();
+    } else {
+      startNewGame('', 'yoshi');
+    }
   }
   startGameLoop();
 }
 
-function startNewGame() {
+function startNewGame(name, character) {
   const now = Date.now();
+  const charKey = character || 'yoshi';
+  const petName = (name || '').trim();
   state = {
     stage: 'egg',
     hunger: 4,
@@ -343,6 +434,8 @@ function startNewGame() {
     happyTicksSinceLoss: 0,
     isMisbehaving: false,
     pendingLightMistake: null,
+    name: petName,
+    character: charKey,
   };
   save();
   render();
@@ -353,6 +446,108 @@ function startGameLoop() {
   if (gameLoopId) clearInterval(gameLoopId);
   gameLoopId = setInterval(tick, CONFIG.TICK_INTERVAL_MS);
   scheduleNextActivity();
+}
+
+/* =====================================================
+   SETUP SCREEN
+   ===================================================== */
+
+function openSetupScreen() {
+  selectedCharacter = null;
+
+  // Populate char grid
+  const grid = document.getElementById('char-grid');
+  if (grid) {
+    grid.innerHTML = '';
+    Object.keys(CHARACTER_META).forEach(key => {
+      const meta = CHARACTER_META[key];
+      const card = document.createElement('div');
+      card.className = 'char-card';
+      card.dataset.char = key;
+
+      // Check if this character has an in-progress game
+      const existing = loadCharacterSave(key);
+      const inProgress = existing && existing.stage !== 'dead';
+      const badgeHtml = inProgress
+        ? '<span class="char-in-progress">In Progress</span>'
+        : '';
+
+      card.innerHTML = `
+        <div class="char-card-preview char-preview--${key}"></div>
+        <div class="char-card-name">${meta.displayName}</div>
+        ${badgeHtml}
+      `;
+      card.addEventListener('click', () => selectCharacter(key));
+      grid.appendChild(card);
+    });
+  }
+
+  // Clear previous input + info
+  const nameInput = document.getElementById('pet-name-input');
+  if (nameInput) nameInput.value = '';
+
+  const infoName  = document.getElementById('char-info-name');
+  const infoType  = document.getElementById('char-info-type');
+  const infoTrait = document.getElementById('char-info-trait');
+  const infoDesc  = document.getElementById('char-info-desc');
+  if (infoName)  infoName.textContent  = '';
+  if (infoType)  infoType.textContent  = 'Select a character above';
+  if (infoTrait) infoTrait.textContent = '';
+  if (infoDesc)  infoDesc.textContent  = '';
+
+  const startBtn = document.getElementById('btn-start-game');
+  if (startBtn) startBtn.disabled = true;
+
+  openOverlay('setup-screen');
+}
+
+function selectCharacter(charKey) {
+  selectedCharacter = charKey;
+
+  // Update selected class on cards
+  document.querySelectorAll('.char-card').forEach(card => {
+    card.classList.toggle('selected', card.dataset.char === charKey);
+  });
+
+  updateCharInfo(charKey);
+  validateSetup();
+}
+
+function updateCharInfo(charKey) {
+  const meta = CHARACTER_META[charKey];
+  if (!meta) return;
+  const infoName  = document.getElementById('char-info-name');
+  const infoType  = document.getElementById('char-info-type');
+  const infoTrait = document.getElementById('char-info-trait');
+  const infoDesc  = document.getElementById('char-info-desc');
+  if (infoName)  infoName.textContent  = meta.displayName;
+  if (infoType)  infoType.textContent  = meta.type;
+  if (infoTrait) infoTrait.textContent = meta.trait;
+  if (infoDesc)  infoDesc.textContent  = meta.description;
+}
+
+function validateSetup() {
+  const nameInput = document.getElementById('pet-name-input');
+  const startBtn  = document.getElementById('btn-start-game');
+  if (!nameInput || !startBtn) return;
+  const hasName = nameInput.value.trim().length > 0;
+  startBtn.disabled = !(hasName && selectedCharacter);
+}
+
+function confirmSetup() {
+  const nameInput = document.getElementById('pet-name-input');
+  const name = nameInput ? nameInput.value.trim() : '';
+  if (!name || !selectedCharacter) return;
+
+  // Close setup screen
+  const setupScreen = document.getElementById('setup-screen');
+  if (setupScreen) {
+    setupScreen.classList.remove('open');
+    setupScreen.setAttribute('aria-hidden', 'true');
+  }
+
+  startNewGame(name, selectedCharacter);
+  render();
 }
 
 /* =====================================================
@@ -380,13 +575,13 @@ function silentTick() {
   if (!state.isSleeping) {
     // Hunger decay
     state.hungerTicksSinceLoss++;
-    if (state.hungerTicksSinceLoss >= CONFIG.HUNGER_DECAY_TICKS) {
+    if (state.hungerTicksSinceLoss >= getCharConfig('HUNGER_DECAY_TICKS')) {
       state.hunger = Math.max(0, state.hunger - 1);
       state.hungerTicksSinceLoss = 0;
     }
     // Happy decay
     state.happyTicksSinceLoss++;
-    if (state.happyTicksSinceLoss >= CONFIG.HAPPY_DECAY_TICKS) {
+    if (state.happyTicksSinceLoss >= getCharConfig('HAPPY_DECAY_TICKS')) {
       state.happy = Math.max(0, state.happy - 1);
       state.happyTicksSinceLoss = 0;
     }
@@ -435,7 +630,7 @@ function tick() {
   if (!state.isSleeping) {
     // Hunger decay
     state.hungerTicksSinceLoss++;
-    if (state.hungerTicksSinceLoss >= CONFIG.HUNGER_DECAY_TICKS) {
+    if (state.hungerTicksSinceLoss >= getCharConfig('HUNGER_DECAY_TICKS')) {
       state.hunger = Math.max(0, state.hunger - 1);
       state.hungerTicksSinceLoss = 0;
       if (state.hunger === 0) triggerAttention('hunger');
@@ -443,7 +638,7 @@ function tick() {
 
     // Happy decay
     state.happyTicksSinceLoss++;
-    if (state.happyTicksSinceLoss >= CONFIG.HAPPY_DECAY_TICKS) {
+    if (state.happyTicksSinceLoss >= getCharConfig('HAPPY_DECAY_TICKS')) {
       state.happy = Math.max(0, state.happy - 1);
       state.happyTicksSinceLoss = 0;
       if (state.happy === 0) triggerAttention('happy');
@@ -464,14 +659,14 @@ function tick() {
   }
 
   // Weight sickness
-  if (state.weight >= CONFIG.WEIGHT_SICK_THRESHOLD && !state.isSick) {
+  if (state.weight >= getCharConfig('WEIGHT_SICK_THRESHOLD') && !state.isSick) {
     makeSick('overweight');
   }
 
   // Sick death check
   if (state.isSick && state.sickSince &&
       Date.now() - state.sickSince > CONFIG.SICK_DEATH_DELAY_MS) {
-    if (Math.random() < CONFIG.SICK_DEATH_CHANCE) {
+    if (Math.random() < getCharConfig('SICK_DEATH_CHANCE')) {
       die('sickness');
       return;
     }
@@ -557,9 +752,17 @@ function evolve(newStage) {
 function die(cause) {
   stopCurrentActivity();
   console.log('Pet died from:', cause);
+  const preDeathStage = state.stage;
+  saveHistoryEntry(cause, preDeathStage);
   state.stage = 'dead';
   state.attentionSince = null;
   playSound('death');
+  // Update char class on death-pet element
+  const deathPetEl = document.querySelector('.death-pet');
+  if (deathPetEl) {
+    Object.keys(CHARACTER_META).forEach(k => deathPetEl.classList.remove('char--' + k));
+    if (state.character) deathPetEl.classList.add('char--' + state.character);
+  }
   save();
   render();
 
@@ -796,15 +999,18 @@ function discipline() {
 
 function showStatus() {
   playSound('select');
-  // Update status modal values
+
+  const adultNames = {
+    yoshi:        { good: 'Mametchi (Good)',    avg: 'Ginjirotchi (Avg)',  bad: 'Kuchipatchi (Bad)'  },
+    mendakotchi:  { good: 'Menda-Star (Good)',  avg: 'Menda-Wave (Avg)',   bad: 'Menda-Drift (Bad)'  },
+    mermarintchi: { good: 'Merma-Pearl (Good)', avg: 'Merma-Shell (Avg)',  bad: 'Merma-Kelp (Bad)'   },
+    horhotchi:    { good: 'Horho-Sage (Good)',  avg: 'Horho-Dusk (Avg)',   bad: 'Horho-Sleepy (Bad)' },
+  };
+  const charAdults = adultNames[state.character] || adultNames.yoshi;
+
   const stageNames = {
-    egg: 'Egg',
-    baby: 'Baby',
-    child: 'Child',
-    teen: 'Teen',
-    'adult-good': 'Mametchi (Good)',
-    'adult-avg': 'Ginjirotchi (Avg)',
-    'adult-bad': 'Kuchipatchi (Bad)',
+    egg: 'Egg', baby: 'Baby', child: 'Child', teen: 'Teen',
+    'adult-good': charAdults.good, 'adult-avg': charAdults.avg, 'adult-bad': charAdults.bad,
     dead: 'Passed Away',
   };
 
@@ -812,10 +1018,12 @@ function showStatus() {
     ? Math.floor((Date.now() - state.bornAt) / (1000 * 60 * 60))
     : 0;
 
-  setEl('stat-stage',    stageNames[state.stage] || state.stage);
-  setEl('stat-age',      `${ageHrs} hrs`);
-  setEl('stat-weight',   `${state.weight}g`);
-  setEl('stat-mistakes', String(state.careMistakes));
+  setEl('stat-name',      state.name || '—');
+  setEl('stat-character', CHARACTER_META[state.character]?.displayName || state.character);
+  setEl('stat-stage',     stageNames[state.stage] || state.stage);
+  setEl('stat-age',       `${ageHrs} hrs`);
+  setEl('stat-weight',    `${state.weight}g`);
+  setEl('stat-mistakes',  String(state.careMistakes));
 
   // Discipline hearts
   const discEl = document.getElementById('stat-discipline');
@@ -825,7 +1033,40 @@ function showStatus() {
     ).join('');
   }
 
+  // Reset history view to stats view
+  const tbl = document.getElementById('status-table');
+  const hist = document.getElementById('history-list');
+  if (tbl) tbl.style.display = '';
+  if (hist) hist.style.display = 'none';
+
   openModal('status-modal');
+}
+
+function populateHistory() {
+  const entries = loadHistory(state.character);
+  const entriesEl = document.getElementById('history-entries');
+  const emptyEl   = document.getElementById('history-empty');
+  if (!entriesEl || !emptyEl) return;
+
+  if (entries.length === 0) {
+    entriesEl.innerHTML = '';
+    emptyEl.style.display = '';
+    return;
+  }
+
+  emptyEl.style.display = 'none';
+  entriesEl.innerHTML = entries.slice().reverse().map(e => {
+    const lifeHrs = e.bornAt && e.diedAt
+      ? Math.floor((e.diedAt - e.bornAt) / (1000 * 60 * 60))
+      : 0;
+    const charMeta = CHARACTER_META[e.character] || {};
+    const stageName = e.finalStage || e.character || '?';
+    const causeLabel = e.cause === 'sickness' ? 'Illness' : e.cause === 'starvation' ? 'Starvation' : 'Unknown';
+    return `<div class="history-entry">
+      <span class="history-name">${e.name || '—'}</span>
+      <span class="history-detail">${charMeta.displayName || e.character} · ${stageName} · ${lifeHrs}h · ${causeLabel} · ${e.careMistakes} mistakes</span>
+    </div>`;
+  }).join('');
 }
 
 /* =====================================================
@@ -1047,12 +1288,18 @@ function endGame(won) {
 
 function render() {
   renderPet();
+  renderName();
   renderStats();
   renderAlerts();
   renderButtons();
   renderGameClock();
   renderPoops();
   renderSoundBtn();
+}
+
+function renderName() {
+  const el = document.getElementById('pet-name');
+  if (el) el.textContent = state.name || '';
 }
 
 function renderPet() {
@@ -1066,6 +1313,10 @@ function renderPet() {
     'pet--sleeping', 'pet--sick', 'pet--dead',
   ];
   stageClasses.forEach(c => petEl.classList.remove(c));
+
+  // Remove all char-- classes then apply current character
+  Object.keys(CHARACTER_META).forEach(k => petEl.classList.remove('char--' + k));
+  petEl.classList.add('char--' + (state.character || 'yoshi'));
 
   // Map stage to CSS class
   const stageClass = `pet--${state.stage}`;
@@ -1316,16 +1567,38 @@ if (!IS_TEST) {
     });
   });
 
-  // New game button
+  // New game button → open setup screen
   document.getElementById('btn-new-game').addEventListener('click', () => {
-    closeModal('death-screen');
     const deathScreen = document.getElementById('death-screen');
     if (deathScreen) {
       deathScreen.classList.remove('open');
       deathScreen.setAttribute('aria-hidden', 'true');
     }
-    startNewGame();
-    render();
+    openSetupScreen();
+  });
+
+  // Setup screen: name input validation
+  document.getElementById('pet-name-input')
+    .addEventListener('input', validateSetup);
+
+  // Setup screen: start game button
+  document.getElementById('btn-start-game')
+    .addEventListener('click', confirmSetup);
+
+  // Status modal: history toggle
+  document.getElementById('btn-show-history').addEventListener('click', () => {
+    const tbl  = document.getElementById('status-table');
+    const hist = document.getElementById('history-list');
+    if (tbl)  tbl.style.display  = 'none';
+    if (hist) hist.style.display = '';
+    populateHistory();
+  });
+
+  document.getElementById('btn-history-back').addEventListener('click', () => {
+    const tbl  = document.getElementById('status-table');
+    const hist = document.getElementById('history-list');
+    if (tbl)  tbl.style.display  = '';
+    if (hist) hist.style.display = 'none';
   });
 
   // Click on pet → trigger a random activity immediately
@@ -1378,6 +1651,7 @@ globalThis._game = {
         attentionSince: null, gameClockHours: 10, tickCount: 0,
         hungerTicksSinceLoss: 0, happyTicksSinceLoss: 0,
         isMisbehaving: false, pendingLightMistake: null,
+        name: '', character: 'yoshi',
       };
     },
     hourCrossed, randBetween,
@@ -1385,7 +1659,8 @@ globalThis._game = {
     checkEvolution, evolve, die, spawnPoop, makeSick,
     logCareMistake, triggerAttention,
     tick, silentTick, applyCatchUpTicks,
-    save, load, startNewGame,
+    save, load, startNewGame, loadCharacterSave, saveHistoryEntry, loadHistory,
+    CHARACTER_CONFIGS, CHARACTER_META, getCharConfig,
     getSoundEnabled: () => soundEnabled,
     initSound,
     toggleSound,
@@ -1396,4 +1671,10 @@ globalThis._game = {
     stopCurrentActivity,
     scheduleNextActivity,
     getCurrentActivity: () => currentActivity,
+    openSetupScreen,
+    selectCharacter,
+    validateSetup,
+    confirmSetup,
+    renderName,
+    populateHistory,
   };

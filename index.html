@@ -24,6 +24,9 @@
         <!-- Sleep overlay -->
         <div class="sleep-overlay"></div>
 
+        <!-- Pet name (top-left corner) -->
+        <div class="pet-name" id="pet-name"></div>
+
         <!-- Alert icons (top-right corner) -->
         <div class="alert-icons">
           <span class="icon-attention" title="Attention needed">🔔</span>
@@ -127,7 +130,9 @@
       <button class="modal-close" data-close="status-modal">✕</button>
       <h2 class="modal-title">Status</h2>
       <div class="modal-body">
-        <table class="status-table">
+        <table class="status-table" id="status-table">
+          <tr><th>Name</th><td id="stat-name">—</td></tr>
+          <tr><th>Character</th><td id="stat-character">Yoshi</td></tr>
           <tr><th>Stage</th><td id="stat-stage">Egg</td></tr>
           <tr><th>Age</th><td id="stat-age">0 hrs</td></tr>
           <tr><th>Weight</th><td id="stat-weight">5g</td></tr>
@@ -142,6 +147,14 @@
             </td>
           </tr>
         </table>
+        <div class="status-history-section">
+          <button id="btn-show-history" class="history-toggle-btn">Past Pets</button>
+          <div id="history-list" class="history-list" style="display:none">
+            <button id="btn-history-back" class="history-back-btn">← Back</button>
+            <div id="history-entries" class="history-entries"></div>
+            <div id="history-empty" class="history-empty">No past pets yet.</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -162,10 +175,33 @@
   <!-- Death Screen -->
   <div id="death-screen" class="death-screen" aria-hidden="true">
     <div class="death-card">
-      <div class="death-pet pet--dead"></div>
+      <div class="death-pet pet--dead char--yoshi"></div>
       <h1 class="death-title">Your pet has passed away</h1>
       <p class="death-message" id="death-message">It lived a short but meaningful life.</p>
       <button id="btn-new-game" class="new-game-btn">New Game 🥚</button>
+    </div>
+  </div>
+
+  <!-- Setup Screen -->
+  <div id="setup-screen" class="setup-screen" aria-hidden="true">
+    <div class="setup-card">
+      <h1 class="setup-title">New Pet</h1>
+      <div class="setup-section">
+        <label class="setup-label" for="pet-name-input">Name your pet</label>
+        <input type="text" id="pet-name-input" class="setup-input"
+               maxlength="12" placeholder="Enter name..." autocomplete="off" />
+      </div>
+      <div class="setup-section">
+        <label class="setup-label">Choose a character</label>
+        <div class="char-grid" id="char-grid"></div>
+      </div>
+      <div class="char-info" id="char-info">
+        <div class="char-info-name" id="char-info-name"></div>
+        <div class="char-info-type" id="char-info-type">Select a character above</div>
+        <div class="char-info-trait" id="char-info-trait"></div>
+        <div class="char-info-desc" id="char-info-desc"></div>
+      </div>
+      <button id="btn-start-game" class="start-game-btn" disabled>Start Game</button>
     </div>
   </div>
 

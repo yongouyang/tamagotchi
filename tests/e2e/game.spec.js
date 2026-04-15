@@ -3,20 +3,48 @@ import { test, expect } from '@playwright/test';
 
 /**
  * Inject a state patch into localStorage and reload the page.
- * This lets us test specific scenarios without waiting for real-time decay.
+ * Uses the new per-character key architecture (tamagotchi_save_{character}).
  */
 async function setState(page, patch) {
   await page.evaluate((patch) => {
-    const raw = localStorage.getItem('tamagotchi_save');
+    const char = patch.character || localStorage.getItem('tamagotchi_current_character') || 'yoshi';
+    const key = 'tamagotchi_save_' + char;
+    const raw = localStorage.getItem(key);
     const s = raw ? JSON.parse(raw) : {};
     Object.assign(s, patch, { lastTickAt: Date.now() });
-    localStorage.setItem('tamagotchi_save', JSON.stringify(s));
+    if (!s.name) s.name = 'Test';
+    if (!s.character) s.character = char;
+    localStorage.setItem(key, JSON.stringify(s));
+    localStorage.setItem('tamagotchi_current_character', char);
   }, patch);
   await page.reload();
 }
 
+/**
+ * Seed a default yoshi save so the setup screen doesn't block tests.
+ */
+async function seedDefaultSave(page) {
+  await page.evaluate(() => {
+    const now = Date.now();
+    const s = {
+      stage: 'egg', hunger: 4, happy: 4, weight: 5, discipline: 0,
+      careMistakes: 0, isSick: false, medicineCount: 0, sickSince: null,
+      isSleeping: false, lightsOff: false, poopCount: 0, nextPoopTick: 10,
+      ticksSinceLastPoop: 0, bornAt: now, stageStartedAt: now, lastTickAt: now,
+      attentionSince: null, gameClockHours: 10, tickCount: 0,
+      hungerTicksSinceLoss: 0, happyTicksSinceLoss: 0,
+      isMisbehaving: false, pendingLightMistake: null,
+      name: 'Test', character: 'yoshi',
+    };
+    localStorage.setItem('tamagotchi_save_yoshi', JSON.stringify(s));
+    localStorage.setItem('tamagotchi_current_character', 'yoshi');
+  });
+}
+
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
+  await seedDefaultSave(page);
+  await page.reload();
   await page.waitForSelector('.pet');
 });
 
@@ -128,13 +156,21 @@ test('toggling light during daytime shows not-bedtime toast', async ({ page }) =
 });
 
 test('new game button resets pet to egg', async ({ page }) => {
-  // Manually set death state
+  // Set death state
   await setState(page, { stage: 'dead' });
-  // Death screen should appear on reload (pet is dead)
-  // Click new game
+  // Death screen should appear
   const newGameBtn = page.locator('#btn-new-game');
   await expect(newGameBtn).toBeVisible({ timeout: 5000 });
   await newGameBtn.click({ force: true });
+
+  // Setup screen should now be open
+  await expect(page.locator('#setup-screen')).toHaveClass(/open/);
+
+  // Fill in name + select character + start
+  await page.fill('#pet-name-input', 'Newpet');
+  await page.click('.char-card[data-char="yoshi"]');
+  await page.click('#btn-start-game');
+
   await expect(page.locator('.pet--egg')).toBeVisible();
   // Hunger hearts should be filled (4/4)
   const filledHearts = page.locator('#hunger-hearts .heart:not(.empty)');
@@ -328,4 +364,92 @@ test('stopCurrentActivity removes activity class and restores idle', async ({ pa
     el.classList.contains('lying-down')
   );
   expect(hasActivity).toBe(false);
+});
+
+// ── Setup screen ──────────────────────────────────────────────────────────────
+
+test('setup screen appears when no save exists', async ({ page }) => {
+  // Clear all storage and reload
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await expect(page.locator('#setup-screen')).toHaveClass(/open/);
+  await expect(page.locator('#char-grid .char-card')).toHaveCount(4);
+});
+
+test('start game button disabled until name + character selected', async ({ page }) => {
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await expect(page.locator('#btn-start-game')).toBeDisabled();
+
+  // Type name only — still disabled (no character)
+  await page.fill('#pet-name-input', 'Buddy');
+  await expect(page.locator('#btn-start-game')).toBeDisabled();
+
+  // Select character — now enabled
+  await page.click('.char-card[data-char="yoshi"]');
+  await expect(page.locator('#btn-start-game')).toBeEnabled();
+});
+
+test('selecting a character shows info panel', async ({ page }) => {
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.click('.char-card[data-char="horhotchi"]');
+  await expect(page.locator('#char-info-name')).toHaveText('Horhotchi');
+  await expect(page.locator('#char-info-type')).toHaveText('Owl');
+});
+
+test('completing setup starts game with pet name displayed on screen', async ({ page }) => {
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.fill('#pet-name-input', 'Bubbles');
+  await page.click('.char-card[data-char="mendakotchi"]');
+  await page.click('#btn-start-game');
+
+  await expect(page.locator('#setup-screen')).not.toHaveClass(/open/);
+  await expect(page.locator('#pet-name')).toHaveText('Bubbles');
+  await expect(page.locator('.pet--egg')).toBeVisible();
+});
+
+test('pet name shown in status modal', async ({ page }) => {
+  await setState(page, { name: 'Yoshino', character: 'yoshi', stage: 'baby' });
+  await page.click('#btn-status');
+  await expect(page.locator('#stat-name')).toHaveText('Yoshino');
+  await expect(page.locator('#stat-character')).toHaveText('Yoshi');
+});
+
+test('pet name persists on screen after reload', async ({ page }) => {
+  await setState(page, { name: 'Dino', character: 'yoshi', stage: 'baby' });
+  await expect(page.locator('#pet-name')).toHaveText('Dino');
+});
+
+// ── History ───────────────────────────────────────────────────────────────────
+
+test('past pets history appears in status modal after pet dies', async ({ page }) => {
+  // Seed a history entry directly in localStorage
+  await page.evaluate(() => {
+    const entry = {
+      name: 'OldPet', character: 'yoshi', bornAt: Date.now() - 3600000,
+      diedAt: Date.now(), cause: 'sickness', careMistakes: 2, finalStage: 'child',
+    };
+    localStorage.setItem('tamagotchi_history_yoshi', JSON.stringify([entry]));
+  });
+  await setState(page, { stage: 'baby', character: 'yoshi' });
+
+  await page.click('#btn-status');
+  await expect(page.locator('#status-modal')).toHaveClass(/open/);
+
+  // Open history panel
+  await page.click('#btn-show-history');
+  await expect(page.locator('#history-list')).toBeVisible();
+  await expect(page.locator('.history-entry')).toHaveCount(1);
+  await expect(page.locator('.history-name')).toHaveText('OldPet');
+});
+
+test('history back button returns to stats view', async ({ page }) => {
+  await setState(page, { stage: 'baby', character: 'yoshi' });
+  await page.click('#btn-status');
+  await page.click('#btn-show-history');
+  await expect(page.locator('#status-table')).not.toBeVisible();
+  await page.click('#btn-history-back');
+  await expect(page.locator('#status-table')).toBeVisible();
 });
