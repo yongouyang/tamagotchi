@@ -453,3 +453,46 @@ test('history back button returns to stats view', async ({ page }) => {
   await page.click('#btn-history-back');
   await expect(page.locator('#status-table')).toBeVisible();
 });
+
+// ── Speed indicator ───────────────────────────────────────────────────────────
+
+test('speed indicator renders 1× by default', async ({ page }) => {
+  await expect(page.locator('#speed-indicator')).toBeVisible();
+  await expect(page.locator('#speed-indicator')).toHaveText('1×');
+});
+
+test('clicking speed indicator cycles 1× → 2× → 4× → 1×', async ({ page }) => {
+  await expect(page.locator('#speed-indicator')).toHaveText('1×');
+  await page.click('#speed-indicator');
+  await expect(page.locator('#speed-indicator')).toHaveText('2×');
+  await page.click('#speed-indicator');
+  await expect(page.locator('#speed-indicator')).toHaveText('4×');
+  await page.click('#speed-indicator');
+  await expect(page.locator('#speed-indicator')).toHaveText('1×');
+});
+
+test('speed persists after page reload', async ({ page }) => {
+  await page.click('#speed-indicator'); // → 2×
+  await page.click('#speed-indicator'); // → 4×
+  await expect(page.locator('#speed-indicator')).toHaveText('4×');
+  await page.reload();
+  await page.waitForSelector('.pet');
+  await expect(page.locator('#speed-indicator')).toHaveText('4×');
+});
+
+test('speed indicator has active class at 2× and 4×, not at 1×', async ({ page }) => {
+  // At 1× — should NOT have active class
+  await expect(page.locator('#speed-indicator')).not.toHaveClass(/active/);
+
+  // At 2× — should have active class
+  await page.click('#speed-indicator');
+  await expect(page.locator('#speed-indicator')).toHaveClass(/active/);
+
+  // At 4× — should still have active class
+  await page.click('#speed-indicator');
+  await expect(page.locator('#speed-indicator')).toHaveClass(/active/);
+
+  // Back to 1× — active class removed
+  await page.click('#speed-indicator');
+  await expect(page.locator('#speed-indicator')).not.toHaveClass(/active/);
+});

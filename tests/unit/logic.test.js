@@ -38,3 +38,89 @@ describe('randBetween', () => {
     }
   });
 });
+
+describe('setSpeed', () => {
+  const { setSpeed, checkEvolution, CONFIG } = globalThis._game;
+
+  beforeEach(() => {
+    globalThis._game.resetState();
+  });
+
+  it('setSpeed(2) updates state.speed to 2', () => {
+    setSpeed(2);
+    expect(globalThis._game.state.speed).toBe(2);
+  });
+
+  it('setSpeed(4) updates state.speed to 4', () => {
+    setSpeed(4);
+    expect(globalThis._game.state.speed).toBe(4);
+  });
+
+  it('setSpeed(1) resets state.speed to 1', () => {
+    setSpeed(4);
+    setSpeed(1);
+    expect(globalThis._game.state.speed).toBe(1);
+  });
+});
+
+describe('checkEvolution with speed scaling', () => {
+  const { checkEvolution, CONFIG } = globalThis._game;
+
+  beforeEach(() => {
+    globalThis._game.resetState();
+  });
+
+  it('does not evolve egg before stage duration at 1×', () => {
+    const halfDuration = CONFIG.STAGE_DURATIONS_MS.egg / 2;
+    globalThis._game.setState({
+      stage: 'egg',
+      stageStartedAt: Date.now() - halfDuration,
+      speed: 1,
+    });
+    checkEvolution();
+    expect(globalThis._game.state.stage).toBe('egg');
+  });
+
+  it('evolves egg to baby once real duration elapsed at 1×', () => {
+    globalThis._game.setState({
+      stage: 'egg',
+      stageStartedAt: Date.now() - CONFIG.STAGE_DURATIONS_MS.egg - 1000,
+      speed: 1,
+    });
+    checkEvolution();
+    expect(globalThis._game.state.stage).toBe('baby');
+  });
+
+  it('evolves egg to baby at 2× after half the real duration', () => {
+    const halfDuration = CONFIG.STAGE_DURATIONS_MS.egg / 2;
+    globalThis._game.setState({
+      stage: 'egg',
+      stageStartedAt: Date.now() - halfDuration - 1000,
+      speed: 2,
+    });
+    checkEvolution();
+    expect(globalThis._game.state.stage).toBe('baby');
+  });
+
+  it('does not evolve egg at 2× before half the real duration', () => {
+    const quarterDuration = CONFIG.STAGE_DURATIONS_MS.egg / 4;
+    globalThis._game.setState({
+      stage: 'egg',
+      stageStartedAt: Date.now() - quarterDuration,
+      speed: 2,
+    });
+    checkEvolution();
+    expect(globalThis._game.state.stage).toBe('egg');
+  });
+
+  it('evolves egg to baby at 4× after quarter of the real duration', () => {
+    const quarterDuration = CONFIG.STAGE_DURATIONS_MS.egg / 4;
+    globalThis._game.setState({
+      stage: 'egg',
+      stageStartedAt: Date.now() - quarterDuration - 1000,
+      speed: 4,
+    });
+    checkEvolution();
+    expect(globalThis._game.state.stage).toBe('baby');
+  });
+});

@@ -85,6 +85,7 @@ let state = {
   pendingLightMistake: null,
   name: '',
   character: 'yoshi',
+  speed: 1,
 };
 
 let gameLoopId = null;
@@ -436,6 +437,7 @@ function startNewGame(name, character) {
     pendingLightMistake: null,
     name: petName,
     character: charKey,
+    speed: 1,
   };
   save();
   render();
@@ -444,8 +446,16 @@ function startNewGame(name, character) {
 
 function startGameLoop() {
   if (gameLoopId) clearInterval(gameLoopId);
-  gameLoopId = setInterval(tick, CONFIG.TICK_INTERVAL_MS);
+  gameLoopId = setInterval(tick, CONFIG.TICK_INTERVAL_MS / (state.speed || 1));
   scheduleNextActivity();
+}
+
+function setSpeed(n) {
+  state.speed = n;
+  save();
+  if (gameLoopId) clearInterval(gameLoopId);
+  gameLoopId = setInterval(tick, CONFIG.TICK_INTERVAL_MS / state.speed);
+  render();
 }
 
 /* =====================================================
@@ -698,7 +708,7 @@ function checkEvolution() {
   const stageDuration = CONFIG.STAGE_DURATIONS_MS[state.stage];
   if (!stageDuration) return; // adult stages don't evolve further
 
-  const timeInStage = now - state.stageStartedAt;
+  const timeInStage = (now - state.stageStartedAt) * (state.speed || 1);
   if (timeInStage < stageDuration) return;
 
   const transitions = {
@@ -1402,6 +1412,12 @@ function renderGameClock() {
   const minutes = (state.gameClockHours % 1) >= 0.5 ? '30' : '00';
   const hh = String(hours).padStart(2, '0');
   el.textContent = `${hh}:${minutes}`;
+
+  const speedEl = document.getElementById('speed-indicator');
+  if (speedEl) {
+    speedEl.textContent = `${state.speed || 1}×`;
+    speedEl.classList.toggle('active', (state.speed || 1) > 1);
+  }
 }
 
 function renderPoops() {
@@ -1601,6 +1617,12 @@ if (!IS_TEST) {
     if (hist) hist.style.display = 'none';
   });
 
+  // Speed indicator → cycle 1× → 2× → 4× → 1×
+  document.getElementById('speed-indicator').addEventListener('click', () => {
+    const next = state.speed === 1 ? 2 : state.speed === 2 ? 4 : 1;
+    setSpeed(next);
+  });
+
   // Click on pet → trigger a random activity immediately
   document.querySelector('.pet').addEventListener('click', () => {
     if (_canDoActivity()) startRandomActivity();
@@ -1651,7 +1673,7 @@ globalThis._game = {
         attentionSince: null, gameClockHours: 10, tickCount: 0,
         hungerTicksSinceLoss: 0, happyTicksSinceLoss: 0,
         isMisbehaving: false, pendingLightMistake: null,
-        name: '', character: 'yoshi',
+        name: '', character: 'yoshi', speed: 1,
       };
     },
     hourCrossed, randBetween,
@@ -1677,4 +1699,5 @@ globalThis._game = {
     confirmSetup,
     renderName,
     populateHistory,
+    setSpeed,
   };
