@@ -12,7 +12,7 @@ const CONFIG = {
   HAPPY_DECAY_TICKS: 12,             // lose 1 happy heart every 12 ticks
   POOP_MIN_TICKS: 8,                 // poop spawns randomly every 8-16 ticks
   POOP_MAX_TICKS: 16,
-  POOP_SICK_THRESHOLD: 3,            // 3 poops → get sick
+  POOP_SICK_THRESHOLD: 8,            // 8 poops → get sick
   ATTENTION_MISTAKE_MS: 15 * 60 * 1000, // 15 min to respond
   LIGHT_MISTAKE_WINDOW_MS: 2 * 60 * 1000, // 2 min grace period
   WEIGHT_SICK_THRESHOLD: 15,
