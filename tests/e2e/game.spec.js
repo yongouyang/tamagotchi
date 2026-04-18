@@ -97,9 +97,37 @@ test('clean button is disabled when no poop', async ({ page }) => {
   await expect(page.locator('#btn-clean')).toBeDisabled();
 });
 
+test('play button is disabled when sleeping', async ({ page }) => {
+  await setState(page, { stage: 'baby', isSleeping: true });
+  await expect(page.locator('#btn-play')).toBeDisabled();
+});
+
+test('play button is disabled at egg stage', async ({ page }) => {
+  await setState(page, { stage: 'egg' });
+  await expect(page.locator('#btn-play')).toBeDisabled();
+});
+
+test('feed button is disabled when dead', async ({ page }) => {
+  await setState(page, { stage: 'dead' });
+  await expect(page.locator('#btn-feed')).toBeDisabled();
+});
+
+test('light button shows default Light label when awake', async ({ page }) => {
+  await setState(page, { stage: 'baby', isSleeping: false });
+  await expect(page.locator('#btn-light .btn-label')).toHaveText('Light');
+  await expect(page.locator('#btn-light .btn-icon')).toHaveText('💡');
+});
+
 test('sickness is shown via skull icon when weight threshold reached', async ({ page }) => {
   await setState(page, { stage: 'baby', isSick: true });
   await expect(page.locator('.icon-skull')).toHaveClass(/active/);
+  await expect(page.locator('#btn-medicine')).toBeEnabled();
+});
+
+test('medicine button enables immediately when pet becomes sick mid-game', async ({ page }) => {
+  await setState(page, { stage: 'baby', isSick: false });
+  await expect(page.locator('#btn-medicine')).toBeDisabled();
+  await page.evaluate(() => window._game.makeSick('poop'));
   await expect(page.locator('#btn-medicine')).toBeEnabled();
 });
 
@@ -193,6 +221,57 @@ test('discipline button glows when pet misbehaves', async ({ page }) => {
   await setState(page, { stage: 'baby', isMisbehaving: true });
   await expect(page.locator('#btn-discipline')).toHaveClass(/active-glow/);
   await expect(page.locator('#btn-discipline')).toBeEnabled();
+});
+
+test('discipline button is disabled and has no glow when pet is not misbehaving', async ({ page }) => {
+  await setState(page, { stage: 'baby', isMisbehaving: false });
+  await expect(page.locator('#btn-discipline')).toBeDisabled();
+  await expect(page.locator('#btn-discipline')).not.toHaveClass(/active-glow/);
+});
+
+test('discipline button loses glow after disciplining', async ({ page }) => {
+  await setState(page, { stage: 'baby', isMisbehaving: true, discipline: 0 });
+  await page.click('#btn-discipline');
+  await expect(page.locator('#btn-discipline')).not.toHaveClass(/active-glow/);
+  await expect(page.locator('#btn-discipline')).toBeDisabled();
+});
+
+// ── Attention and skull icon states ───────────────────────────────────────────
+
+test('attention icon is inactive when pet is healthy and calm', async ({ page }) => {
+  await setState(page, { stage: 'baby', attentionSince: null, isMisbehaving: false, hunger: 4, happy: 4 });
+  await expect(page.locator('.icon-attention')).not.toHaveClass(/active/);
+});
+
+test('attention icon is active when attentionSince is set', async ({ page }) => {
+  await setState(page, { stage: 'baby', attentionSince: Date.now() });
+  await expect(page.locator('.icon-attention')).toHaveClass(/active/);
+});
+
+test('attention icon is active when pet is misbehaving', async ({ page }) => {
+  await setState(page, { stage: 'baby', isMisbehaving: true });
+  await expect(page.locator('.icon-attention')).toHaveClass(/active/);
+});
+
+test('attention icon is active when hunger reaches 0', async ({ page }) => {
+  await setState(page, { stage: 'baby', hunger: 0 });
+  await expect(page.locator('.icon-attention')).toHaveClass(/active/);
+});
+
+test('attention icon is active when happy reaches 0', async ({ page }) => {
+  await setState(page, { stage: 'baby', happy: 0 });
+  await expect(page.locator('.icon-attention')).toHaveClass(/active/);
+});
+
+test('skull icon is inactive when pet is not sick', async ({ page }) => {
+  await setState(page, { stage: 'baby', isSick: false });
+  await expect(page.locator('.icon-skull')).not.toHaveClass(/active/);
+});
+
+test('skull icon is inactive when hunger or happy is 0 but pet is not sick', async ({ page }) => {
+  await setState(page, { stage: 'baby', isSick: false, hunger: 0, happy: 0 });
+  await expect(page.locator('.icon-skull')).not.toHaveClass(/active/);
+  await expect(page.locator('.icon-attention')).toHaveClass(/active/);
 });
 
 test('pressing Escape closes the feed modal', async ({ page }) => {

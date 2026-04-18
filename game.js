@@ -15,7 +15,7 @@ const CONFIG = {
   POOP_SICK_THRESHOLD: 8,            // 8 poops → get sick
   ATTENTION_MISTAKE_MS: 15 * 60 * 1000, // 15 min to respond
   LIGHT_MISTAKE_WINDOW_MS: 2 * 60 * 1000, // 2 min grace period
-  WEIGHT_SICK_THRESHOLD: 15,
+  WEIGHT_SICK_THRESHOLD: 60,
   SICK_DEATH_CHANCE: 0.20,           // 20% per tick if sick untreated > 10 min
   SICK_DEATH_DELAY_MS: 10 * 60 * 1000,
   MEDICINE_DOSES_NEEDED: 3,
@@ -38,7 +38,7 @@ const CONFIG = {
 const CHARACTER_CONFIGS = {
   yoshi:        {},
   mendakotchi:  { HAPPY_DECAY_TICKS: 18 },
-  mermarintchi: { SICK_DEATH_CHANCE: 0.30, WEIGHT_SICK_THRESHOLD: 12 },
+  mermarintchi: { SICK_DEATH_CHANCE: 0.30, WEIGHT_SICK_THRESHOLD: 50 },
   horhotchi:    { HUNGER_DECAY_TICKS: 6, SICK_DEATH_CHANCE: 0.10 },
 };
 
@@ -1378,11 +1378,10 @@ function renderAlerts() {
   const skullEl = document.querySelector('.icon-skull');
   if (!attEl || !skullEl) return;
 
-  const needsAttention = !!state.attentionSince || state.isMisbehaving;
+  const needsAttention = !!state.attentionSince || state.isMisbehaving
+    || state.hunger === 0 || state.happy === 0;
   attEl.classList.toggle('active', needsAttention);
-
-  const isDanger = state.isSick || state.hunger === 0 || state.happy === 0;
-  skullEl.classList.toggle('active', isDanger);
+  skullEl.classList.toggle('active', state.isSick);
 }
 
 function renderButtons() {
