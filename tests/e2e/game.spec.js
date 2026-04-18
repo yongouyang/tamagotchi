@@ -348,7 +348,8 @@ test('startRandomActivity applies an activity class to the pet', async ({ page }
   const hasActivity = await page.locator('.pet').evaluate(el =>
     el.classList.contains('walking') ||
     el.classList.contains('dancing') ||
-    el.classList.contains('lying-down')
+    el.classList.contains('lying-down') ||
+    el.classList.contains('singing')
   );
   expect(hasActivity).toBe(true);
 });
@@ -361,7 +362,8 @@ test('stopCurrentActivity removes activity class and restores idle', async ({ pa
   const hasActivity = await page.locator('.pet').evaluate(el =>
     el.classList.contains('walking') ||
     el.classList.contains('dancing') ||
-    el.classList.contains('lying-down')
+    el.classList.contains('lying-down') ||
+    el.classList.contains('singing')
   );
   expect(hasActivity).toBe(false);
 });

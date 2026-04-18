@@ -966,6 +966,34 @@ body {
 .pet.walking    { animation: yoshi-walk    2s   linear       infinite; }
 .pet.dancing    { animation: yoshi-dance   0.7s ease-in-out  infinite; }
 .pet.lying-down { animation: yoshi-liedown 8s   ease-in-out  1 forwards; }
+.pet.singing    { animation: yoshi-sing    0.9s ease-in-out  infinite; }
+
+/* Singing sway */
+@keyframes yoshi-sing {
+  0%   { transform: translate(-50%,-50%) rotate(0deg)  translateY(0);    }
+  25%  { transform: translate(-50%,-50%) rotate(-7deg) translateY(-4px); }
+  50%  { transform: translate(-50%,-50%) rotate(0deg)  translateY(-6px); }
+  75%  { transform: translate(-50%,-50%) rotate(7deg)  translateY(-4px); }
+  100% { transform: translate(-50%,-50%) rotate(0deg)  translateY(0);    }
+}
+
+/* Floating musical note */
+.pet.singing::after {
+  content: '♪';
+  position: absolute;
+  top: -10px;
+  left: 60%;
+  font-size: 13px;
+  color: #f06;
+  pointer-events: none;
+  animation: note-float 1.6s ease-out infinite;
+}
+
+@keyframes note-float {
+  0%   { opacity: 0;   transform: translateY(0);     }
+  20%  { opacity: 1;   transform: translateY(-6px);  }
+  100% { opacity: 0;   transform: translateY(-28px); }
+}
 
 /* =====================================================
    STATS

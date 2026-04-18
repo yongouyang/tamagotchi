@@ -211,6 +211,16 @@ const MELODIES = {
     ],
     loopMs: 2100,
   },
+  // Happy singing — cheerful C-major arpeggio, sine-wave (1.8 s)
+  sing: {
+    notes: [
+      {f:523,d:0.00,t:0.13,w:'sine',v:0.11},{f:659,d:0.16,t:0.13,w:'sine',v:0.11},
+      {f:784,d:0.32,t:0.13,w:'sine',v:0.11},{f:1047,d:0.48,t:0.22,w:'sine',v:0.12},
+      {f:784,d:0.76,t:0.13,w:'sine',v:0.10},{f:659,d:0.92,t:0.13,w:'sine',v:0.10},
+      {f:523,d:1.08,t:0.13,w:'sine',v:0.10},{f:392,d:1.24,t:0.22,w:'sine',v:0.09},
+    ],
+    loopMs: 1800,
+  },
 };
 
 function _melodyLoop(notes, loopMs, gen) {
@@ -233,6 +243,7 @@ const ACTIVITY_MAP = {
   walk:  { cls: 'walking',    dur: 6000 },
   dance: { cls: 'dancing',    dur: 5000 },
   rest:  { cls: 'lying-down', dur: 8000 },
+  sing:  { cls: 'singing',    dur: 6000 },
 };
 
 function _canDoActivity() {
@@ -254,7 +265,7 @@ function stopCurrentActivity() {
 function startRandomActivity() {
   if (!_canDoActivity()) { scheduleNextActivity(); return; }
   stopCurrentActivity();
-  const keys = Object.keys(ACTIVITY_MAP);
+  const keys = Object.keys(ACTIVITY_MAP).filter(k => k !== 'sing' || state.happy >= 3);
   const key  = keys[Math.floor(Math.random() * keys.length)];
   const act  = ACTIVITY_MAP[key];
   currentActivity = key;

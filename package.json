@@ -10,9 +10,9 @@
     "install:browsers": "playwright install chromium"
   },
   "devDependencies": {
-    "vitest": "^2.0.0",
-    "jsdom": "^25.0.0",
     "@playwright/test": "^1.45.0",
-    "serve": "^14.0.0"
+    "jsdom": "^25.0.0",
+    "serve": "^14.0.0",
+    "vitest": "^2.1.9"
   }
 }

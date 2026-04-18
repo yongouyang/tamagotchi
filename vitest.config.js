@@ -6,5 +6,8 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./tests/setup.js'],
     include: ['tests/unit/**/*.test.js'],
+    environmentOptions: {
+      jsdom: { url: 'http://localhost' },
+    },
   },
 });

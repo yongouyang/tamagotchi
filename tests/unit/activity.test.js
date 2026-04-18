@@ -10,7 +10,7 @@ describe('Activity system', () => {
 
   it('startRandomActivity sets currentActivity to a valid key', () => {
     G.startRandomActivity();
-    expect(['walk', 'dance', 'rest']).toContain(G.getCurrentActivity());
+    expect(['walk', 'dance', 'rest', 'sing']).toContain(G.getCurrentActivity());
   });
 
   it('stopCurrentActivity clears currentActivity', () => {

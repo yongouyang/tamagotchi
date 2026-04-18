@@ -1,3 +1,18 @@
+// Node.js 25 provides a global localStorage without .clear(); replace with a full in-memory mock
+const _lsStore = new Map();
+Object.defineProperty(globalThis, 'localStorage', {
+  value: {
+    getItem: k => _lsStore.has(k) ? _lsStore.get(k) : null,
+    setItem: (k, v) => _lsStore.set(k, String(v)),
+    removeItem: k => _lsStore.delete(k),
+    clear: () => _lsStore.clear(),
+    get length() { return _lsStore.size; },
+    key: i => [..._lsStore.keys()][i] ?? null,
+  },
+  writable: true,
+  configurable: true,
+});
+
 // Mock Web Audio API (not available in jsdom)
 globalThis.AudioContext = class MockAudioContext {
   createOscillator() {
